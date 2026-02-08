@@ -1,0 +1,11 @@
+# 1. Set up database
+python setup_database.py
+
+# 2. Generate realistic data
+python data_generator.py
+
+# 3. Train models
+python models/train_models.py
+
+# 4. Launch dashboard
+streamlit run app.py
