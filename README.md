@@ -6,7 +6,7 @@ respecting prerequisite chains, and providing rich visual analytics.
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # 1. Install dependencies
@@ -23,7 +23,7 @@ The app handles first-time setup automatically:
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 course-recommendation-advanced/
@@ -50,7 +50,7 @@ course-recommendation-advanced/
 
 ---
 
-## 🧠 Machine Learning Design
+##  Machine Learning Design
 
 ### One Model Per Department (Key Design Decision)
 Rather than training a single model across all departments, the system trains
@@ -91,7 +91,7 @@ score = (success_prob^0.6) × (expected_grade/10) × (proficiency_match^0.4) × 
 
 ---
 
-## 📊 Data Generation
+##  Data Generation
 
 - **500 students** across 4 archetype clusters (CS-Theory, Applied-IS, Balanced, SE-Focused)
 - **60 courses** across 5 departments with 3 difficulty tiers (basic/intermediate/advanced)
@@ -100,7 +100,7 @@ score = (success_prob^0.6) × (expected_grade/10) × (proficiency_match^0.4) × 
 
 ---
 
-## 🔒 Prerequisite System
+##  Prerequisite System
 
 The `PrerequisiteChecker` class validates course chains at inference time:
 
@@ -108,7 +108,7 @@ The `PrerequisiteChecker` class validates course chains at inference time:
 checker = PrerequisiteChecker()
 met, warning = checker.check_prerequisites(course_id=14, completed_course_ids=[1, 2, 3])
 # met = False
-# warning = "⚠️ Warning: CS301 (Advanced Algorithms) is a prerequisite for CS401 (Machine Learning)..."
+# warning = " Warning: CS301 (Advanced Algorithms) is a prerequisite for CS401 (Machine Learning)..."
 ```
 
 **Readiness Score** [0-1]:
@@ -118,7 +118,7 @@ met, warning = checker.check_prerequisites(course_id=14, completed_course_ids=[1
 
 ---
 
-## 🎨 Dashboard Features
+##  Dashboard Features
 
 1. **Sidebar input**: Enter any student profile without database writes
 2. **Prerequisite warnings**: Prominent alerts for missing prerequisites
@@ -131,7 +131,7 @@ met, warning = checker.check_prerequisites(course_id=14, completed_course_ids=[1
 
 ---
 
-## 🧪 Example: Priya Sharma
+##  Example: Priya Sharma
 
 Profile: CGPA 8.2 | Hardworking 9 | CS: 9 | Math: 5 | Stat: 7 | IS: 8 | SE: 9
 
@@ -143,7 +143,7 @@ Expected results:
 
 ---
 
-## ⚙️ Manual Setup (optional, for development)
+##  Manual Setup (optional, for development)
 
 ```bash
 # Step 1: Create database schema
@@ -161,7 +161,7 @@ streamlit run app.py
 
 ---
 
-## 📦 Dependencies
+##  Dependencies
 
 | Package       | Purpose                          |
 |---------------|----------------------------------|
