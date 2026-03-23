@@ -1,11 +1,5 @@
-# 1. Set up database
-python setup_database.py
+# For streamlit version 
+- streamlit run app.py (in the terminal)
 
-# 2. Generate realistic data
-python data_generator.py
-
-# 3. Train models
-python models/train_models.py
-
-# 4. Launch dashboard
-streamlit run app.py
+# for CSS version 
+- click the open live server on the landing.html file 

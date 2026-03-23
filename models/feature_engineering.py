@@ -1,19 +1,19 @@
 """
-models/feature_engineering.py
--------------------------------
-Department-specific feature construction for ML models.
+Feature Engineering Module
+==========================
+Creates department-specific feature vectors used by the ML models.
 
-Design principle: Each department model receives features emphasizing that
-department's primary proficiency as the dominant signal, with shared features
-(hardworking, cgpa, etc.) providing supporting context.
+Each department model receives the same *shape* of features but the
+"primary proficiency" column is swapped to match the target department.
 """
 
-import numpy as np
 import pandas as pd
-from typing import Dict, List
+import numpy as np
 
-# Maps department codes to their corresponding proficiency column
-DEPT_PROFICIENCY_MAP: Dict[str, str] = {
+# The order matters – it matches the column order the models expect
+DEPARTMENTS = ["CS", "MATH", "STAT", "IS", "SE"]
+
+DEPT_PROFICIENCY_COL = {
     "CS":   "cs_proficiency",
     "MATH": "math_proficiency",
     "STAT": "stat_proficiency",
@@ -21,113 +21,106 @@ DEPT_PROFICIENCY_MAP: Dict[str, str] = {
     "SE":   "se_proficiency",
 }
 
-# Feature columns expected for model training
-BASE_STUDENT_COLS = [
-    "cgpa", "hardworking_level",
-    "cs_proficiency", "math_proficiency", "stat_proficiency",
-    "is_proficiency", "se_proficiency",
-    "credits_completed", "year",
+# Canonical feature names (after engineering)
+FEATURE_NAMES = [
+    "department_proficiency",
+    "hardworking_level",
+    "cgpa",
+    "credits_completed",
+    "year",
+    "difficulty_level",
+    "avg_workload_hours",
+    "proficiency_difficulty_gap",
+    "workload_capacity",
+    "hardwork_proficiency_product",
+    "experience_factor",
 ]
 
-BASE_COURSE_COLS = [
-    "difficulty_level", "avg_workload_hours",
-]
 
+def build_features(df: pd.DataFrame, department: str) -> pd.DataFrame:
+    """Return a DataFrame with engineered features for *one* department.
 
-def build_features_for_department(
-    df: pd.DataFrame,
-    department: str,
-) -> pd.DataFrame:
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Merged enrollment + student + course data.  Must contain at
+        minimum the raw columns referenced below.
+    department : str
+        One of CS, MATH, STAT, IS, SE.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame with columns matching ``FEATURE_NAMES``.
     """
-    Construct department-specific feature matrix from a merged student-course DataFrame.
+    prof_col = DEPT_PROFICIENCY_COL[department]
 
-    The PRIMARY feature is the department-specific proficiency. Derived interaction
-    features amplify the signal: a student strong in CS attempting a hard CS course
-    gets a clearly positive proficiency_difficulty_gap.
+    features = pd.DataFrame()
+    features["department_proficiency"] = df[prof_col].astype(float)
+    features["hardworking_level"]     = df["hardworking_level"].astype(float)
+    features["cgpa"]                  = df["cgpa"].astype(float)
+    features["credits_completed"]     = df["credits_completed"].astype(float)
+    features["year"]                  = df["year"].astype(float)
+    features["difficulty_level"]      = df["difficulty_level"].astype(float)
+    features["avg_workload_hours"]    = df["avg_workload_hours"].astype(float)
 
-    Args:
-        df: DataFrame with student + course columns merged together.
-        department: One of CS, MATH, STAT, IS, SE.
+    # Derived features
+    features["proficiency_difficulty_gap"] = (
+        features["department_proficiency"] - features["difficulty_level"]
+    )
+    features["workload_capacity"] = (
+        features["credits_completed"] / (features["year"] + 1)
+    )
+    features["hardwork_proficiency_product"] = (
+        features["hardworking_level"] * features["department_proficiency"]
+    )
+    features["experience_factor"] = (
+        features["year"] * features["credits_completed"] / 100.0
+    )
 
-    Returns:
-        Feature DataFrame ready for scikit-learn.
+    return features
+
+
+def build_features_for_student(student_profile: dict,
+                               course_row: dict,
+                               department: str) -> np.ndarray:
+    """Build a single feature vector for a new (custom) student.
+
+    Parameters
+    ----------
+    student_profile : dict
+        Keys: cgpa, hardworking_level, cs_proficiency, math_proficiency,
+              stat_proficiency, is_proficiency, se_proficiency,
+              credits_completed, year.
+    course_row : dict
+        Keys: difficulty_level, avg_workload_hours.
+    department : str
+        The department this course belongs to.
+
+    Returns
+    -------
+    np.ndarray  shape (1, len(FEATURE_NAMES))
     """
-    dept_prof_col = DEPT_PROFICIENCY_MAP[department]
-    dept_prof = df[dept_prof_col]
+    prof_key = DEPT_PROFICIENCY_COL[department]
+    dept_prof = float(student_profile[prof_key])
+    hw = float(student_profile["hardworking_level"])
+    cgpa = float(student_profile["cgpa"])
+    cc = float(student_profile.get("credits_completed", 60))
+    yr = float(student_profile.get("year", 2))
+    diff = float(course_row["difficulty_level"])
+    wl = float(course_row["avg_workload_hours"])
 
-    features = pd.DataFrame({
-        # Primary signal
-        "dept_proficiency":      dept_prof,
-        # Student effort and background
-        "hardworking_level":     df["hardworking_level"],
-        "cgpa":                  df["cgpa"],
-        "credits_completed":     df["credits_completed"],
-        "year":                  df["year"],
-        # Course characteristics
-        "difficulty_level":      df["difficulty_level"],
-        "avg_workload_hours":    df["avg_workload_hours"],
-        # Derived: gap between student capability and course demand
-        "proficiency_difficulty_gap": dept_prof - df["difficulty_level"],
-        # Derived: how much work capacity student has relative to progress
-        "workload_capacity":     df["credits_completed"] / (df["year"] + 1),
-        # Derived: multiplicative synergy between effort and subject skill
-        "hardwork_proficiency_product": df["hardworking_level"] * dept_prof,
-        # Derived: experience factor captures study momentum
-        "experience_factor":     df["year"] * df["credits_completed"] / 100.0,
-    })
-
-    return features.fillna(0.0)
-
-
-def build_single_student_features(
-    student_profile: Dict,
-    course_row: Dict,
-    department: str,
-) -> pd.DataFrame:
-    """
-    Build feature vector for a single (student, course) pair — used during inference.
-
-    Args:
-        student_profile: Dict with student attributes (cgpa, proficiencies, etc.)
-        course_row: Dict with course attributes (difficulty_level, avg_workload_hours, etc.)
-        department: Department code.
-
-    Returns:
-        Single-row feature DataFrame matching training schema.
-    """
-    dept_prof_col = DEPT_PROFICIENCY_MAP[department]
-    dept_prof = student_profile.get(dept_prof_col, 5.0)
-
-    row = {
-        "dept_proficiency":            dept_prof,
-        "hardworking_level":           student_profile.get("hardworking_level", 5),
-        "cgpa":                        student_profile.get("cgpa", 5.0),
-        "credits_completed":           student_profile.get("credits_completed", 0),
-        "year":                        student_profile.get("year", 1),
-        "difficulty_level":            course_row.get("difficulty_level", 5.0),
-        "avg_workload_hours":          course_row.get("avg_workload_hours", 10.0),
-        "proficiency_difficulty_gap":  dept_prof - course_row.get("difficulty_level", 5.0),
-        "workload_capacity":           student_profile.get("credits_completed", 0) / (
-                                           student_profile.get("year", 1) + 1
-                                       ),
-        "hardwork_proficiency_product": student_profile.get("hardworking_level", 5) * dept_prof,
-        "experience_factor":            student_profile.get("year", 1) * student_profile.get("credits_completed", 0) / 100.0,
-    }
-    return pd.DataFrame([row])
-
-
-def get_feature_names() -> List[str]:
-    """Return ordered list of feature names (must match build_features_for_department output)."""
-    return [
-        "dept_proficiency",
-        "hardworking_level",
-        "cgpa",
-        "credits_completed",
-        "year",
-        "difficulty_level",
-        "avg_workload_hours",
-        "proficiency_difficulty_gap",
-        "workload_capacity",
-        "hardwork_proficiency_product",
-        "experience_factor",
+    vec = [
+        dept_prof,
+        hw,
+        cgpa,
+        cc,
+        yr,
+        diff,
+        wl,
+        dept_prof - diff,                  # proficiency_difficulty_gap
+        cc / (yr + 1),                     # workload_capacity
+        hw * dept_prof,                    # hardwork_proficiency_product
+        yr * cc / 100.0,                   # experience_factor
     ]
+    return np.array(vec).reshape(1, -1)

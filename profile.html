@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>CourseIQ - Student Profile</title>
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn.apply(console, args);
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c9a74a",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#0a0c14", // Deeper dark navy
+                        "surface-dark": "#161b2b",
+                        "border-dark": "#2d354d",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "mono": ["Space Mono", "monospace"],
+                        "sans": ["DM Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        .radar-grid {
+            background-image: radial-gradient(circle at center, rgba(201, 167, 74, 0.15) 0%, transparent 70%);
+        }
+        .glow-gold {
+            box-shadow: 0 0 15px rgba(201, 167, 74, 0.4);
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #c9a74a;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #0a0c14;
+            transition: transform 0.1s;
+        }
+        .custom-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen flex-col">
+    <!-- Top Navigation -->
+    <header class="flex items-center justify-between border-b border-border-dark px-8 py-4 bg-surface-dark/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-8">
+            <a href="landing.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <div class="text-primary">
+                    <span class="material-symbols-outlined text-3xl">database</span>
+                </div>
+                <h2 class="font-display text-xl font-bold tracking-tight">CourseIQ</h2>
+            </a>
+            <nav class="hidden md:flex items-center gap-6">
+                <a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="index.html">Dashboard</a>
+                <a class="text-primary text-sm font-medium border-b-2 border-primary pb-1" href="profile.html">Profile</a>
+                <a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="analytics.html">Analytics</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=k96HI5LKSkWwaDkGNL1pYZjTMjXMmtpLtBv25QzA_u5UM1FTWDcyNENWOU9LOFhIQjk5WkJCTlA3QS4u" target="_blank" class="hidden sm:block text-[10px] font-mono font-bold uppercase tracking-widest text-primary border border-primary/20 px-4 py-2 rounded-lg hover:bg-primary/10 transition-all">Submit Review</a>
+            <button class="p-2 rounded-lg bg-surface-dark border border-border-dark text-slate-300 hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-xl">notifications</span>
+            </button>
+            <div class="h-10 w-10 rounded-full border-2 border-primary overflow-hidden">
+                <img class="h-full w-full object-cover" alt="Student profile" src="https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=0a0c14&bold=true"/>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        <!-- Left Column: Input Form (40%) -->
+        <div class="w-full lg:w-[40%] border-r border-border-dark bg-surface-dark/30 overflow-y-auto px-8 py-10">
+            <div class="max-w-md mx-auto">
+                <header class="mb-10">
+                    <h1 class="font-display text-3xl font-bold mb-2">Student Profile</h1>
+                    <p class="text-slate-400 text-sm">Configure your academic parameters to synchronize your learning path.</p>
+                </header>
+
+                <!-- Identity Section -->
+                <section class="space-y-6 mb-12">
+                    <div class="flex items-center gap-2 text-primary mb-4">
+                        <span class="material-symbols-outlined text-sm">fingerprint</span>
+                        <h3 class="font-mono text-xs uppercase tracking-widest">Identity</h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-slate-400 uppercase">First Name</label>
+                            <input id="first-name-input" class="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 focus:ring-primary focus:border-primary text-sm outline-none transition-colors border" type="text" value="Alex"/>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-slate-400 uppercase">Last Name</label>
+                            <input id="last-name-input" class="w-full bg-background-dark border-border-dark rounded-lg px-4 py-3 focus:ring-primary focus:border-primary text-sm outline-none transition-colors border" type="text" value="Chen"/>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Academic Standing -->
+                <section class="space-y-6 mb-12">
+                    <div class="flex items-center gap-2 text-primary mb-4">
+                        <span class="material-symbols-outlined text-sm">school</span>
+                        <h3 class="font-mono text-xs uppercase tracking-widest">Academic Standing</h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6 mb-4">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-end">
+                                <label class="text-xs font-semibold text-slate-400 uppercase">Current CGPA</label>
+                                <span class="font-mono text-primary text-lg font-bold" id="cgpa-val">7.50 / 10</span>
+                            </div>
+                            <input class="w-full h-1.5 bg-border-dark rounded-full appearance-none custom-slider" id="cgpa-slider" max="10" min="0" step="0.1" type="range" value="7.5"/>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-end">
+                                <label class="text-xs font-semibold text-slate-400 uppercase">Hardworking</label>
+                                <span class="font-mono text-primary text-lg font-bold" id="hw-val">7 / 10</span>
+                            </div>
+                            <input class="w-full h-1.5 bg-border-dark rounded-full appearance-none custom-slider" id="hw-slider" max="10" min="1" step="1" type="range" value="7"/>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-slate-400 uppercase" for="year-select">Current Year</label>
+                            <select id="year-select" class="w-full bg-background-dark border border-border-dark rounded-lg px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 outline-none">
+                                <option value="1">Year 1</option>
+                                <option value="2" selected>Year 2</option>
+                                <option value="3">Year 3</option>
+                                <option value="4">Year 4</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-slate-400 uppercase">Credits</label>
+                            <input id="credits-input" class="w-full bg-background-dark border border-border-dark rounded-lg px-4 py-3 focus:ring-primary focus:border-primary text-sm outline-none transition-colors" type="number" min="0" max="200" value="60"/>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Subject Proficiencies -->
+                <section class="space-y-8 mb-12">
+                    <div class="flex items-center gap-2 text-primary mb-4">
+                        <span class="material-symbols-outlined text-sm">analytics</span>
+                        <h3 class="font-mono text-xs uppercase tracking-widest">Subject Proficiencies (0-10)</h3>
+                    </div>
+
+                    <!-- Proficiency Sliders -->
+                    <div class="space-y-6">
+                        <!-- CS -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-emerald-400 text-lg">code</span>
+                                    <span class="text-sm font-medium">Comp. Science</span>
+                                </div>
+                                <span class="font-mono text-xs text-slate-400" id="cs-val">7.0</span>
+                            </div>
+                            <input class="w-full h-1 bg-border-dark rounded-full appearance-none custom-slider prof-slider" data-subject="cs" max="10" min="0" step="0.1" type="range" value="7.0"/>
+                        </div>
+                        
+                        <!-- Mathematics -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-blue-400 text-lg">calculate</span>
+                                    <span class="text-sm font-medium">Mathematics</span>
+                                </div>
+                                <span class="font-mono text-xs text-slate-400" id="math-val">6.0</span>
+                            </div>
+                            <input class="w-full h-1 bg-border-dark rounded-full appearance-none custom-slider prof-slider" data-subject="math" max="10" min="0" step="0.1" type="range" value="6.0"/>
+                        </div>
+                        
+                        <!-- Statistics -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-purple-400 text-lg">trending_up</span>
+                                    <span class="text-sm font-medium">Statistics</span>
+                                </div>
+                                <span class="font-mono text-xs text-slate-400" id="stat-val">6.5</span>
+                            </div>
+                            <input class="w-full h-1 bg-border-dark rounded-full appearance-none custom-slider prof-slider" data-subject="stat" max="10" min="0" step="0.1" type="range" value="6.5"/>
+                        </div>
+
+                        <!-- Information Systems (IS) -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-rose-400 text-lg">domain</span>
+                                    <span class="text-sm font-medium">Info Systems</span>
+                                </div>
+                                <span class="font-mono text-xs text-slate-400" id="is-val">6.0</span>
+                            </div>
+                            <input class="w-full h-1 bg-border-dark rounded-full appearance-none custom-slider prof-slider" data-subject="is" max="10" min="0" step="0.1" type="range" value="6.0"/>
+                        </div>
+
+                        <!-- Software Engineering (SE) -->
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-orange-400 text-lg">engineering</span>
+                                    <span class="text-sm font-medium">Software Eng.</span>
+                                </div>
+                                <span class="font-mono text-xs text-slate-400" id="se-val">6.5</span>
+                            </div>
+                            <input class="w-full h-1 bg-border-dark rounded-full appearance-none custom-slider prof-slider" data-subject="se" max="10" min="0" step="0.1" type="range" value="6.5"/>
+                        </div>
+                    </div>
+                </section>
+
+                <button class="w-full py-4 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-lg transition-all glow-gold flex items-center justify-center gap-2 mb-10" onclick="saveProfileAndRedirect()">
+                    <span>Save Profile Analytics</span>
+                    <span class="material-symbols-outlined">bolt</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Preview Radar Chart (60%) -->
+        <div class="hidden lg:flex flex-1 items-center justify-center bg-background-dark relative overflow-hidden">
+            <!-- Abstract Background Elements -->
+            <div class="absolute inset-0 radar-grid opacity-30"></div>
+            
+            <div class="absolute top-0 right-0 p-8">
+                <div class="flex flex-col items-end gap-1">
+                    <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary/60">System Status</span>
+                    <span class="flex items-center gap-2 text-emerald-400 font-mono text-xs">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        LIVE SYNC ACTIVE
+                    </span>
+                </div>
+            </div>
+
+            <!-- Radar Chart Visual Mockup -->
+            <div class="relative w-[500px] h-[500px]">
+                <!-- Outer Hexagon Grids -->
+                <div class="absolute inset-0 border border-border-dark/40 rounded-full scale-[1.0]"></div>
+                <div class="absolute inset-0 border border-border-dark/40 rounded-full scale-[0.8]"></div>
+                <div class="absolute inset-0 border border-border-dark/40 rounded-full scale-[0.6]"></div>
+                <div class="absolute inset-0 border border-border-dark/40 rounded-full scale-[0.4]"></div>
+                <div class="absolute inset-0 border border-border-dark/40 rounded-full scale-[0.2]"></div>
+
+                <!-- Axis Lines (5 spokes rotated by 72 degrees each) -->
+                <div class="absolute top-0 left-1/2 w-px h-1/2 bg-border-dark/60 origin-bottom" style="transform: rotate(0deg);"></div>
+                <div class="absolute top-0 left-1/2 w-px h-1/2 bg-border-dark/60 origin-bottom" style="transform: rotate(72deg);"></div>
+                <div class="absolute top-0 left-1/2 w-px h-1/2 bg-border-dark/60 origin-bottom" style="transform: rotate(144deg);"></div>
+                <div class="absolute top-0 left-1/2 w-px h-1/2 bg-border-dark/60 origin-bottom" style="transform: rotate(216deg);"></div>
+                <div class="absolute top-0 left-1/2 w-px h-1/2 bg-border-dark/60 origin-bottom" style="transform: rotate(288deg);"></div>
+
+                <!-- Radar Shape (SVG for precision) -->
+                <svg class="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(201,167,74,0.3)] overflow-visible" viewBox="0 0 100 100">
+                    <polygon id="radar-polygon" fill="rgba(201, 167, 74, 0.2)" stroke="#c9a74a" stroke-width="0.8" style="transition: all 0.3s ease;"></polygon>
+                    <!-- Data Points -->
+                    <circle id="radar-pt-0" r="1.5" fill="#c9a74a" style="transition: all 0.3s ease;"></circle>
+                    <circle id="radar-pt-1" r="1.5" fill="#c9a74a" style="transition: all 0.3s ease;"></circle>
+                    <circle id="radar-pt-2" r="1.5" fill="#c9a74a" style="transition: all 0.3s ease;"></circle>
+                    <circle id="radar-pt-3" r="1.5" fill="#c9a74a" style="transition: all 0.3s ease;"></circle>
+                    <circle id="radar-pt-4" r="1.5" fill="#c9a74a" style="transition: all 0.3s ease;"></circle>
+                </svg>
+
+                <!-- Labels -->
+                <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-center" style="z-index:10;">
+                    <span class="block font-mono text-xs font-bold text-blue-400">MATH</span>
+                    <span class="text-[10px] text-slate-500">QUANTITATIVE</span>
+                </div>
+
+                <div class="absolute top-[30%] -right-16 -translate-y-1/2" style="z-index:10;">
+                    <span class="block font-mono text-xs font-bold text-emerald-400">CS</span>
+                    <span class="text-[10px] text-slate-500">SYSTEMS</span>
+                </div>
+
+                <div class="absolute bottom-[8%] -right-8" style="z-index:10;">
+                    <span class="block font-mono text-xs font-bold text-purple-400">STAT</span>
+                    <span class="text-[10px] text-slate-500">DATA</span>
+                </div>
+
+                <div class="absolute bottom-[8%] -left-12 text-right" style="z-index:10;">
+                    <span class="block font-mono text-xs font-bold text-rose-400">IS</span>
+                    <span class="text-[10px] text-slate-500">BUSINESS</span>
+                </div>
+
+                <div class="absolute top-[30%] -left-20 -translate-y-1/2 text-right" style="z-index:10;">
+                    <span class="block font-mono text-xs font-bold text-orange-400">SE</span>
+                    <span class="text-[10px] text-slate-500">ENGINEERING</span>
+                </div>
+            </div>
+
+            <!-- Footer Summary Card -->
+            <div class="absolute bottom-12 left-1/2 -translate-x-1/2 w-[80%] max-w-lg bg-surface-dark/80 backdrop-blur-xl border border-border-dark p-6 rounded-xl flex items-center justify-between">
+                <div>
+                    <h4 class="text-sm font-bold text-white">Recommended Stream</h4>
+                    <p class="text-xs text-slate-400">Based on your proficiency map and CGPA</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-primary font-display font-bold text-lg" id="stream-label">CS / SE Alignment</span>
+                    <div class="flex gap-1 justify-end mt-1">
+                        <span class="h-1 w-4 bg-primary rounded-full"></span>
+                        <span class="h-1 w-4 bg-primary rounded-full"></span>
+                        <span class="h-1 w-4 bg-primary/20 rounded-full"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // LocalStorage sync
+    function saveProfileAndRedirect() {
+        const firstName = document.getElementById('first-name-input').value;
+        const lastName = document.getElementById('last-name-input').value;
+        const year = document.getElementById('year-select').value;
+        const credits = document.getElementById('credits-input').value;
+        const cgpa = document.getElementById('cgpa-slider').value;
+        const hardworking = document.getElementById('hw-slider').value;
+        const csProf = document.querySelector('input[data-subject="cs"]').value;
+        const mathProf = document.querySelector('input[data-subject="math"]').value;
+        const statProf = document.querySelector('input[data-subject="stat"]').value;
+        const isProf = document.querySelector('input[data-subject="is"]').value;
+        const seProf = document.querySelector('input[data-subject="se"]').value;
+        
+        localStorage.setItem('studentFirstName', firstName);
+        localStorage.setItem('studentLastName', lastName);
+        localStorage.setItem('studentYear', year);
+        localStorage.setItem('studentCredits', credits);
+        localStorage.setItem('studentCgpa', cgpa);
+        localStorage.setItem('studentHardworking', hardworking);
+        localStorage.setItem('studentCsProf', csProf);
+        localStorage.setItem('studentMathProf', mathProf);
+        localStorage.setItem('studentStatProf', statProf);
+        localStorage.setItem('studentIsProf', isProf);
+        localStorage.setItem('studentSeProf', seProf);
+        
+        window.location.href = 'index.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const storedFirst = localStorage.getItem('studentFirstName');
+        const storedLast = localStorage.getItem('studentLastName');
+        const storedYear = localStorage.getItem('studentYear');
+        const storedCredits = localStorage.getItem('studentCredits');
+        const storedCgpa = localStorage.getItem('studentCgpa');
+        const storedHw = localStorage.getItem('studentHardworking');
+        const storedCs = localStorage.getItem('studentCsProf');
+        const storedMath = localStorage.getItem('studentMathProf');
+        const storedStat = localStorage.getItem('studentStatProf');
+        const storedIs = localStorage.getItem('studentIsProf');
+        const storedSe = localStorage.getItem('studentSeProf');
+
+        if (storedFirst) document.getElementById('first-name-input').value = storedFirst;
+        if (storedLast) document.getElementById('last-name-input').value = storedLast;
+        if (storedYear) document.getElementById('year-select').value = storedYear;
+        if (storedCredits) document.getElementById('credits-input').value = storedCredits;
+        if (storedCgpa) { document.getElementById('cgpa-slider').value = storedCgpa; document.getElementById('cgpa-val').innerText = `${parseFloat(storedCgpa).toFixed(2)} / 10`; }
+        if (storedHw) { document.getElementById('hw-slider').value = storedHw; document.getElementById('hw-val').innerText = `${storedHw} / 10`; }
+        if (storedCs) { document.querySelector('input[data-subject="cs"]').value = storedCs; }
+        if (storedMath) { document.querySelector('input[data-subject="math"]').value = storedMath; }
+        if (storedStat) { document.querySelector('input[data-subject="stat"]').value = storedStat; }
+        if (storedIs) { document.querySelector('input[data-subject="is"]').value = storedIs; }
+        if (storedSe) { document.querySelector('input[data-subject="se"]').value = storedSe; }
+        
+        if (storedFirst && storedLast) {
+            const fullNameEncoder = encodeURIComponent(`${storedFirst} ${storedLast}`);
+            const avatarImg = document.querySelector('header img');
+            if (avatarImg) {
+                avatarImg.src = `https://ui-avatars.com/api/?name=${fullNameEncoder}&background=c9a74a&color=0a0c14&bold=true`;
+            }
+        }
+    });
+
+    // Logic for updating UI and interactive Radar Chart
+    
+    // Sliders
+    const cgpaSlider = document.getElementById('cgpa-slider');
+    const cgpaVal = document.getElementById('cgpa-val');
+    cgpaSlider.addEventListener('input', (e) => cgpaVal.innerText = `${parseFloat(e.target.value).toFixed(2)} / 10`);
+
+    const hwSlider = document.getElementById('hw-slider');
+    const hwVal = document.getElementById('hw-val');
+    hwSlider.addEventListener('input', (e) => hwVal.innerText = `${e.target.value} / 10`);
+
+    // Subject Sliders logic (0-10) -> Radar (0-50 radius mapped from 0-10 score)
+    const subjects = ['math', 'cs', 'stat', 'is', 'se'];
+    
+    // Convert a score (0-10) and angle in degrees to [x, y] on SVG viewBox (0-100, center is 50,50)
+    function polarToCartesian(score, angleInDegrees) {
+        const radius = (score / 10) * 50; // max radius is 50
+        const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+        return {
+            x: 50 + (radius * Math.cos(angleInRadians)),
+            y: 50 + (radius * Math.sin(angleInRadians))
+        };
+    }
+
+    function updateRadar() {
+        const polygon = document.getElementById('radar-polygon');
+        let pointsString = "";
+        
+        let highestSubj = '';
+        let highestScore = -1;
+
+        subjects.forEach((sub, i) => {
+            const val = parseFloat(document.querySelector(`input[data-subject="${sub}"]`).value);
+            document.getElementById(`${sub}-val`).innerText = val.toFixed(1);
+            
+            if(val > highestScore) {
+                highestScore = val;
+                highestSubj = sub;
+            }
+
+            // angle: starts straight up at -90deg, goes clockwise by 72deg each
+            const angle = i * 72;
+            const pt = polarToCartesian(val, angle);
+            
+            pointsString += `${pt.x},${pt.y} `;
+            
+            const circle = document.getElementById(`radar-pt-${i}`);
+            circle.setAttribute('cx', pt.x);
+            circle.setAttribute('cy', pt.y);
+        });
+
+        polygon.setAttribute('points', pointsString.trim());
+        
+        // Update recommended stream mock text based on highest score
+        const labels = {
+            'math': 'Quant Trading / Math Focus',
+            'cs': 'Core CS / Systems',
+            'stat': 'Data Science Specialist',
+            'is': 'Business Tech Analyst',
+            'se': 'Full Stack Developer'
+        };
+        document.getElementById('stream-label').innerText = labels[highestSubj];
+    }
+
+    // Attach event listeners
+    document.querySelectorAll('.prof-slider').forEach(s => {
+        s.addEventListener('input', updateRadar);
+    });
+
+    // Initial render
+    updateRadar();
+</script>
+</body>
+</html>

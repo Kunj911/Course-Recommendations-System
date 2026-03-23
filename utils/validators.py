@@ -1,103 +1,57 @@
 """
-utils/validators.py
---------------------
-Input validation for student profile entries.
-Keeps validation logic separate from UI so it can be tested independently.
+Input Validators
+================
+Centralised validation helpers for student profile inputs.
+Used by both the Streamlit UI and any programmatic callers.
 """
 
-from typing import Dict, List, Tuple, Optional
-
+from typing import Any
 
 PROFICIENCY_FIELDS = [
-    "cs_proficiency", "math_proficiency", "stat_proficiency",
-    "is_proficiency", "se_proficiency",
+    ("cgpa", "CGPA"),
+    ("hardworking_level", "Hardworking Level"),
+    ("cs_proficiency", "CS Proficiency"),
+    ("math_proficiency", "Math Proficiency"),
+    ("stat_proficiency", "Statistics Proficiency"),
+    ("is_proficiency", "IS Proficiency"),
+    ("se_proficiency", "SE Proficiency"),
 ]
 
-SCORE_RANGE = (0.0, 10.0)
-CGPA_RANGE  = (0.0, 10.0)
-HARD_RANGE  = (1, 10)
-YEAR_RANGE  = (1, 4)
+MIN_VAL = 0.0
+MAX_VAL = 10.0
+MIN_HARDWORKING = 1
+MAX_HARDWORKING = 10
 
 
-def validate_student_profile(profile: Dict) -> Tuple[bool, List[str]]:
+def validate_range(value: Any, field_name: str,
+                   low: float = MIN_VAL, high: float = MAX_VAL) -> tuple[bool, str]:
+    """Return (is_valid, error_message). Empty string if valid."""
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return False, f"{field_name} must be a number."
+    if v < low or v > high:
+        return False, f"{field_name} must be between {low} and {high}."
+    return True, ""
+
+
+def validate_student_profile(profile: dict) -> list[str]:
+    """Validate all fields in a student profile dict.
+
+    Returns a list of error strings (empty list = valid).
     """
-    Validate a student profile dictionary before sending to recommender.
+    errors: list[str] = []
 
-    Args:
-        profile: Dict with all student fields.
+    if not profile.get("name", "").strip():
+        errors.append("Name is required.")
 
-    Returns:
-        (is_valid: bool, errors: List[str])
-    """
-    errors = []
+    for key, label in PROFICIENCY_FIELDS:
+        if key == "hardworking_level":
+            ok, msg = validate_range(profile.get(key), label,
+                                     MIN_HARDWORKING, MAX_HARDWORKING)
+        else:
+            ok, msg = validate_range(profile.get(key), label)
+        if not ok:
+            errors.append(msg)
 
-    # Name
-    name = profile.get("name", "").strip()
-    if not name:
-        errors.append("Name cannot be empty.")
-    elif len(name) > 100:
-        errors.append("Name must be 100 characters or fewer.")
-
-    # CGPA
-    cgpa = profile.get("cgpa")
-    if cgpa is None:
-        errors.append("CGPA is required.")
-    elif not (CGPA_RANGE[0] <= float(cgpa) <= CGPA_RANGE[1]):
-        errors.append(f"CGPA must be between {CGPA_RANGE[0]} and {CGPA_RANGE[1]}.")
-
-    # Hardworking level
-    hw = profile.get("hardworking_level")
-    if hw is None:
-        errors.append("Hardworking level is required.")
-    elif not (HARD_RANGE[0] <= int(hw) <= HARD_RANGE[1]):
-        errors.append(f"Hardworking level must be between {HARD_RANGE[0]} and {HARD_RANGE[1]}.")
-
-    # Proficiency scores
-    for field in PROFICIENCY_FIELDS:
-        val = profile.get(field)
-        if val is None:
-            errors.append(f"{field.replace('_', ' ').title()} is required.")
-        elif not (SCORE_RANGE[0] <= float(val) <= SCORE_RANGE[1]):
-            errors.append(
-                f"{field.replace('_', ' ').title()} must be between "
-                f"{SCORE_RANGE[0]} and {SCORE_RANGE[1]}."
-            )
-
-    return len(errors) == 0, errors
-
-
-def sanitize_float(value: Optional[float], default: float = 5.0, min_val: float = 0.0, max_val: float = 10.0) -> float:
-    """Clamp a float to a safe range, returning default if None."""
-    if value is None:
-        return default
-    return float(max(min_val, min(max_val, value)))
-
-
-def build_student_dict(
-    name: str,
-    cgpa: float,
-    hardworking_level: int,
-    cs_proficiency: float,
-    math_proficiency: float,
-    stat_proficiency: float,
-    is_proficiency: float,
-    se_proficiency: float,
-    year: int = 2,
-    credits_completed: int = 60,
-) -> Dict:
-    """
-    Construct a normalized student profile dict for inference.
-    Uses sanitize_float to prevent out-of-range values from crashing models.
-    """
-    return {
-        "name":               name.strip(),
-        "cgpa":               sanitize_float(cgpa),
-        "hardworking_level":  max(1, min(10, int(hardworking_level))),
-        "cs_proficiency":     sanitize_float(cs_proficiency),
-        "math_proficiency":   sanitize_float(math_proficiency),
-        "stat_proficiency":   sanitize_float(stat_proficiency),
-        "is_proficiency":     sanitize_float(is_proficiency),
-        "se_proficiency":     sanitize_float(se_proficiency),
-        "year":               max(1, min(4, int(year))),
-        "credits_completed":  max(0, int(credits_completed)),
-    }
+    return errors

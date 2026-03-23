@@ -1,638 +1,496 @@
 """
-app.py
--------
-Course Recommendation System — Streamlit Dashboard.
+CourseIQ – Streamlit Dashboard (Light Theme)
+=============================================
+Premium, interactive UI for the multi-model ensemble course recommender.
 
-Aesthetic direction: Dark academic — deep navy/slate tones, golden accents,
-clean typography using Space Mono for headers and clear sans for body.
-Professional but approachable; like a high-end university portal.
+Launch:  streamlit run app.py
 """
 
 import os
-import sys
+import textwrap
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
-import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(__file__))
-
-# ─── Page Config (must be first Streamlit call) ───────────────────────────────
+# ---------------------------------------------------------------------------
+# Page config (must be first Streamlit call)
+# ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="CourseIQ — Smart Course Recommendations",
+    page_title="CourseIQ – Smart Course Recommender",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ─── Custom CSS ───────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# Light Theme CSS
+# ---------------------------------------------------------------------------
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-  html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-  }
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
 
-  .main { background: #0d1117; }
+/* ── Main background ── */
+.stApp {
+    background: #f4f6fb;
+}
 
-  h1, h2, h3 { font-family: 'Space Mono', monospace !important; }
+/* ── Sidebar ── */
+section[data-testid="stSidebar"] {
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+}
+section[data-testid="stSidebar"] label {
+    color: #374151 !important;
+    font-weight: 500;
+}
+section[data-testid="stSidebar"] .stMarkdown h1,
+section[data-testid="stSidebar"] .stMarkdown h2,
+section[data-testid="stSidebar"] .stMarkdown h3,
+section[data-testid="stSidebar"] .stMarkdown h4 {
+    color: #111827;
+}
 
-  .hero-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 2.6rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #e2b96f 0%, #f5d89e 50%, #c9955a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    line-height: 1.2;
-    margin-bottom: 0.25rem;
-  }
+/* ── Native Streamlit metric ── */
+div[data-testid="metric-container"] {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+div[data-testid="metric-container"] label {
+    color: #6b7280 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+    color: #111827 !important;
+    font-size: 28px !important;
+    font-weight: 800 !important;
+}
 
-  .hero-sub {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1.05rem;
-    color: #8b949e;
-    margin-bottom: 2rem;
-  }
+/* ── Section headings ── */
+h2, h3 {
+    color: #111827 !important;
+}
 
-  .metric-card {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem;
-    margin-bottom: 1rem;
-    transition: border-color 0.2s;
-  }
+/* ── Expander ── */
+.streamlit-expanderHeader {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    color: #111827 !important;
+    font-weight: 600 !important;
+}
 
-  .metric-card:hover { border-color: #e2b96f; }
-
-  .dept-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-family: 'Space Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-
-  .warning-box {
-    background: #1a1200;
-    border-left: 4px solid #e2b96f;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-    color: #f0c27f;
-  }
-
-  .section-header {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.1rem;
-    color: #e2b96f;
-    border-bottom: 1px solid #30363d;
-    padding-bottom: 0.4rem;
-    margin: 1.5rem 0 1rem 0;
-    letter-spacing: 0.03em;
-  }
-
-  .profile-pill {
-    background: #1c2128;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
-    display: inline-block;
-    margin: 0.2rem;
-    font-size: 0.88rem;
-    color: #cdd9e5;
-  }
-
-  .stButton > button {
-    background: linear-gradient(135deg, #e2b96f, #c9955a) !important;
-    color: #0d1117 !important;
-    font-family: 'Space Mono', monospace !important;
-    font-weight: 700 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.6rem 1.5rem !important;
-    font-size: 0.95rem !important;
-    width: 100% !important;
-    letter-spacing: 0.03em !important;
-    transition: opacity 0.2s !important;
-  }
-
-  .stButton > button:hover { opacity: 0.88 !important; }
-
-  .sidebar-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #e2b96f;
-    margin-bottom: 1.2rem;
-    letter-spacing: 0.05em;
-  }
-
-  div[data-testid="stSidebar"] {
-    background: #0d1117 !important;
-    border-right: 1px solid #21262d !important;
-  }
-
-  .rec-row-cs    { border-left: 4px solid #4FC3F7; }
-  .rec-row-math  { border-left: 4px solid #81C784; }
-  .rec-row-stat  { border-left: 4px solid #FFB74D; }
-  .rec-row-is    { border-left: 4px solid #CE93D8; }
-  .rec-row-se    { border-left: 4px solid #F48FB1; }
-
-  .stNumberInput input, .stTextInput input {
-    background: #161b22 !important;
-    border: 1px solid #30363d !important;
-    color: #cdd9e5 !important;
-    border-radius: 6px !important;
-  }
-
-  .stSlider > div > div { color: #e2b96f !important; }
-
-  footer { display: none !important; }
+/* ── Hide Streamlit branding ── */
+#MainMenu { visibility: hidden; }
+footer    { visibility: hidden; }
+header    { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── Lazy initialization helpers ──────────────────────────────────────────────
-
-@st.cache_resource(show_spinner="Loading recommendation engine...")
-def get_recommender():
-    """Load the recommender once and cache it for the session."""
-    from models.recommender import CourseRecommender
-    return CourseRecommender()
-
-
-def ensure_data_and_models():
-    """
-    One-time setup: generates DB, trains models if they don't exist.
-    Runs only on first launch.
-    """
-    db_path    = os.path.join(os.path.dirname(__file__), "database", "course_recommendation.db")
-    model_path = os.path.join(os.path.dirname(__file__), "models", "saved", "CS_logistic.pkl")
-
-    if not os.path.exists(db_path) or os.path.getsize(db_path) < 1000:
-        with st.spinner("🏗️  First-time setup: generating database..."):
-            from data_generator import run_data_generation
-            run_data_generation()
-
-    if not os.path.exists(model_path):
-        with st.spinner("🧠 First-time setup: training department models..."):
-            from models.train_department_models import train_all_models
-            train_all_models()
-
-
-# ─── Visualization helpers ─────────────────────────────────────────────────────
-
+# ---------------------------------------------------------------------------
+# Department colour mapping
+# ---------------------------------------------------------------------------
 DEPT_COLORS = {
-    "CS":   "#4FC3F7",
-    "MATH": "#81C784",
-    "STAT": "#FFB74D",
-    "IS":   "#CE93D8",
-    "SE":   "#F48FB1",
+    "CS":   "#3b82f6",
+    "MATH": "#8b5cf6",
+    "STAT": "#0ea5e9",
+    "IS":   "#f59e0b",
+    "SE":   "#10b981",
 }
 
-PLOT_BGCOLOR  = "#0d1117"
-PLOT_PAPER    = "#0d1117"
-GRID_COLOR    = "#21262d"
-FONT_COLOR    = "#cdd9e5"
-ACCENT        = "#e2b96f"
+DEPT_BG = {
+    "CS":   "#dbeafe",
+    "MATH": "#ede9fe",
+    "STAT": "#e0f2fe",
+    "IS":   "#fef3c7",
+    "SE":   "#d1fae5",
+}
 
+# ---------------------------------------------------------------------------
+# Helper – render arbitrary HTML safely via iframe (avoids Markdown parser)
+# ---------------------------------------------------------------------------
+def render_html(html: str, height: int = 200):
+    """Render raw HTML in an iframe to bypass Streamlit's Markdown engine."""
+    full = textwrap.dedent(f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8"/>
+          <style>
+            * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+            body {{ font-family: 'Inter', sans-serif; background: transparent; color: #111827; }}
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+          </style>
+        </head>
+        <body>{html}</body>
+        </html>
+    """)
+    components.html(full, height=height, scrolling=False)
 
-def make_success_chart(df: pd.DataFrame) -> go.Figure:
-    colors = [DEPT_COLORS.get(d, "#888") for d in df["department"]]
-    labels = df["course_code"] + "<br><span style='font-size:10px'>" + df["department"] + "</span>"
+# ---------------------------------------------------------------------------
+# Auto-training guard
+# ---------------------------------------------------------------------------
+def ensure_data_and_models():
+    saved_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "saved")
+    marker    = os.path.join(saved_dir, "CS_gb_classifier.pkl")
+    if not os.path.exists(marker):
+        db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database", "course_recommendation.db")
+        is_populated = False
+        if os.path.exists(db_path):
+            import sqlite3
+            try:
+                conn = sqlite3.connect(db_path)
+                count = conn.execute("SELECT COUNT(*) FROM courses").fetchone()[0]
+                conn.close()
+                is_populated = count > 0
+            except Exception:
+                pass
+        if not is_populated:
+            from setup_database import setup_database
+            setup_database()
+            from data_generator import main as generate_all_data
+            generate_all_data()
+        with st.spinner("First launch – training ensemble models…"):
+            from models.train_department_models import train_all_models
+            train_all_models(verbose=True)
+        st.success("Ensemble models trained successfully!")
 
-    fig = go.Figure(go.Bar(
-        x=df.index,
-        y=(df["success_probability"] * 100).round(1),
-        text=(df["success_probability"] * 100).round(1).astype(str) + "%",
-        textposition="outside",
-        marker_color=colors,
-        marker_line_width=0,
-        customdata=df[["course_name", "department"]].values,
-        hovertemplate="<b>%{customdata[0]}</b><br>Dept: %{customdata[1]}<br>Success: %{y:.1f}%<extra></extra>",
-    ))
-    fig.update_layout(
-        title=dict(text="Success Probability by Course", font=dict(color=ACCENT, family="Space Mono", size=14)),
-        xaxis=dict(tickmode="array", tickvals=df.index, ticktext=df["course_code"],
-                   tickfont=dict(size=10, color=FONT_COLOR), gridcolor=GRID_COLOR),
-        yaxis=dict(title="Success Probability (%)", title_font=dict(color=FONT_COLOR),
-                   tickfont=dict(color=FONT_COLOR), range=[0, 115], gridcolor=GRID_COLOR),
-        plot_bgcolor=PLOT_BGCOLOR, paper_bgcolor=PLOT_PAPER,
-        font=dict(color=FONT_COLOR),
-        margin=dict(t=50, b=60, l=50, r=20),
-        height=340,
-        showlegend=False,
-    )
-    return fig
+ensure_data_and_models()
 
+# ---------------------------------------------------------------------------
+# Sidebar
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("## 🎓 Student Profile")
+    st.markdown("---")
+    name = st.text_input("Full Name", placeholder="e.g. Alex Kumar")
 
-def make_grade_chart(df: pd.DataFrame) -> go.Figure:
-    colors = [DEPT_COLORS.get(d, "#888") for d in df["department"]]
+    st.markdown("#### Academic Metrics")
+    cgpa        = st.number_input("CGPA (0-10)", min_value=0.0, max_value=10.0, value=7.0, step=0.1)
+    hardworking = st.slider("Hardworking Level", 1, 10, 6)
 
-    fig = go.Figure(go.Bar(
-        x=df.index,
-        y=df["expected_grade"].round(2),
-        text=df["expected_grade"].round(1).astype(str),
-        textposition="outside",
-        marker_color=colors,
-        marker_line_width=0,
-        customdata=df[["course_name", "department"]].values,
-        hovertemplate="<b>%{customdata[0]}</b><br>Dept: %{customdata[1]}<br>Expected Grade: %{y:.1f}/10<extra></extra>",
-    ))
-    fig.update_layout(
-        title=dict(text="Expected Grade by Course", font=dict(color=ACCENT, family="Space Mono", size=14)),
-        xaxis=dict(tickmode="array", tickvals=df.index, ticktext=df["course_code"],
-                   tickfont=dict(size=10, color=FONT_COLOR), gridcolor=GRID_COLOR),
-        yaxis=dict(title="Expected Grade (0–10)", title_font=dict(color=FONT_COLOR),
-                   tickfont=dict(color=FONT_COLOR), range=[0, 12], gridcolor=GRID_COLOR),
-        plot_bgcolor=PLOT_BGCOLOR, paper_bgcolor=PLOT_PAPER,
-        font=dict(color=FONT_COLOR),
-        margin=dict(t=50, b=60, l=50, r=20),
-        height=340,
-        showlegend=False,
-    )
-    return fig
+    st.markdown("#### Proficiency Scores")
+    cs_prof   = st.number_input("CS Proficiency",   0.0, 10.0, 5.0, 0.1)
+    math_prof = st.number_input("Math Proficiency", 0.0, 10.0, 5.0, 0.1)
+    stat_prof = st.number_input("Stats Proficiency",0.0, 10.0, 5.0, 0.1)
+    is_prof   = st.number_input("IS Proficiency",   0.0, 10.0, 5.0, 0.1)
+    se_prof   = st.number_input("SE Proficiency",   0.0, 10.0, 5.0, 0.1)
 
+    st.markdown("#### Settings")
+    top_n    = st.slider("Number of Recommendations", 3, 15, 10)
+    st.markdown("---")
+    get_recs = st.button("Get Recommendations", use_container_width=True, type="primary")
+    st.markdown("---")
+    st.caption("Ensemble ML Engine\n\nPer-department: 4 models, weighted voting\n- Pass/Fail: GB(50%) + RF(50%)\n- Grade: GB(60%) + SVR(40%)")
 
-def make_scatter_chart(df: pd.DataFrame) -> go.Figure:
-    fig = go.Figure()
-    for dept, grp in df.groupby("department"):
-        fig.add_trace(go.Scatter(
-            x=grp["success_probability"] * 100,
-            y=grp["expected_grade"],
-            mode="markers+text",
-            text=grp["course_code"],
-            textposition="top center",
-            textfont=dict(size=9, color=FONT_COLOR),
-            marker=dict(
-                color=DEPT_COLORS.get(dept, "#888"),
-                size=grp["recommendation_score"] * 2 + 4,
-                opacity=0.85,
-                line=dict(width=1, color="#21262d"),
-            ),
-            name=dept,
-            hovertemplate="<b>%{text}</b><br>Success: %{x:.1f}%<br>Grade: %{y:.1f}<extra></extra>",
-        ))
+# ---------------------------------------------------------------------------
+# Hero banner
+# ---------------------------------------------------------------------------
+render_html("""
+<div style="background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 50%,#ecfdf5 100%);
+            border:1px solid #e5e7eb;border-radius:20px;padding:48px 48px 44px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.04);margin-bottom:4px;">
+  <div style="font-size:13px;font-weight:700;letter-spacing:.08em;color:#6366f1;
+              text-transform:uppercase;margin-bottom:12px;">AI-Powered Academic Advisor</div>
+  <div style="font-size:40px;font-weight:800;color:#111827;line-height:1.15;margin-bottom:14px;">
+    CourseIQ <span style="color:#6366f1;">Ensemble</span> Suite
+  </div>
+  <div style="font-size:16px;color:#4b5563;line-height:1.7;max-width:620px;">
+    Match yourself with courses where you're statistically most likely to succeed, using
+    department-specialized machine-learning ensembles trained on real student outcomes.
+  </div>
+</div>
+""", height=210)
 
-    fig.update_layout(
-        title=dict(text="Success vs Grade Landscape (size = recommendation score)",
-                   font=dict(color=ACCENT, family="Space Mono", size=13)),
-        xaxis=dict(title="Success Probability (%)", title_font=dict(color=FONT_COLOR),
-                   tickfont=dict(color=FONT_COLOR), gridcolor=GRID_COLOR),
-        yaxis=dict(title="Expected Grade", title_font=dict(color=FONT_COLOR),
-                   tickfont=dict(color=FONT_COLOR), range=[0, 11], gridcolor=GRID_COLOR),
-        plot_bgcolor=PLOT_BGCOLOR, paper_bgcolor=PLOT_PAPER,
-        font=dict(color=FONT_COLOR),
-        legend=dict(bgcolor="#161b22", bordercolor="#30363d", borderwidth=1,
-                    font=dict(color=FONT_COLOR)),
-        margin=dict(t=50, b=50, l=60, r=20),
-        height=400,
-    )
-    return fig
+# ---------------------------------------------------------------------------
+# Main logic
+# ---------------------------------------------------------------------------
+if get_recs:
+    from utils.validators import validate_student_profile
 
+    profile = {
+        "name": name, "cgpa": cgpa, "hardworking_level": hardworking,
+        "cs_proficiency": cs_prof, "math_proficiency": math_prof,
+        "stat_proficiency": stat_prof, "is_proficiency": is_prof,
+        "se_proficiency": se_prof, "credits_completed": 60, "year": 2,
+    }
+    errors = validate_student_profile(profile)
+    if errors:
+        for e in errors:
+            st.error(e)
+        st.stop()
 
-def make_radar_chart(student: dict) -> go.Figure:
-    categories = ["CS", "Math", "Statistics", "Info Systems", "Soft. Eng."]
-    values = [
-        student["cs_proficiency"],
-        student["math_proficiency"],
-        student["stat_proficiency"],
-        student["is_proficiency"],
-        student["se_proficiency"],
-    ]
-    # Close the radar polygon
-    categories += [categories[0]]
-    values += [values[0]]
+    @st.cache_resource
+    def load_recommender():
+        from models.recommender import CourseRecommender
+        return CourseRecommender()
 
-    fig = go.Figure(go.Scatterpolar(
-        r=values,
-        theta=categories,
-        fill="toself",
-        fillcolor="rgba(226,185,111,0.15)",
-        line=dict(color=ACCENT, width=2.5),
-        marker=dict(color=ACCENT, size=7),
-        name=student.get("name", "Student"),
-    ))
-    fig.update_layout(
-        polar=dict(
-            bgcolor="#161b22",
-            radialaxis=dict(visible=True, range=[0, 10], tickfont=dict(color=FONT_COLOR, size=9),
-                            gridcolor=GRID_COLOR, linecolor=GRID_COLOR),
-            angularaxis=dict(tickfont=dict(color=FONT_COLOR, size=11), gridcolor=GRID_COLOR,
-                             linecolor=GRID_COLOR),
-        ),
-        paper_bgcolor=PLOT_PAPER,
-        font=dict(color=FONT_COLOR),
-        title=dict(text="Student Proficiency Profile",
-                   font=dict(color=ACCENT, family="Space Mono", size=14)),
-        showlegend=False,
-        height=380,
-        margin=dict(t=60, b=30, l=30, r=30),
-    )
-    return fig
+    with st.spinner("Loading ensemble models…"):
+        recommender = load_recommender()
+    with st.spinner("Analyzing your profile across 20 specialized models…"):
+        recs = recommender.recommend(profile, top_n=top_n)
 
+    if not recs:
+        st.warning("No recommendations generated. Please check that the database is populated.")
+        st.stop()
 
-# ─── Sidebar ──────────────────────────────────────────────────────────────────
+    # ── Profile Overview ──────────────────────────────────────────────
+    st.markdown("## 👤 Your Academic Snapshot")
+    c1, c2, c3, c4, c5, c6, c7 = st.columns(7)
+    c1.metric("Name",         name or "Anonymous")
+    c2.metric("CGPA",         f"{cgpa}/10")
+    c3.metric("Work Ethic",   f"{hardworking}/10")
+    c4.metric("CS",   f"{cs_prof}/10")
+    c5.metric("Math", f"{math_prof}/10")
+    c6.metric("IS",   f"{is_prof}/10")
+    c7.metric("SE",   f"{se_prof}/10")
 
-def render_sidebar() -> dict | None:
-    with st.sidebar:
-        st.markdown('<div class="sidebar-title">🎓 STUDENT PROFILE</div>', unsafe_allow_html=True)
+    # Prereq warnings
+    bad = [r for r in recs if not r["prerequisite_met"]]
+    if bad:
+        st.markdown("### ⚠️ Prerequisite Alerts")
+        for w in bad:
+            st.warning(w["prerequisite_warning"])
 
-        name = st.text_input("Full Name", placeholder="e.g. Alex Kumar", key="name")
-
-        st.markdown("---")
-        st.markdown("**Academic Standing**")
-        cgpa  = st.number_input("CGPA (0–10)", min_value=0.0, max_value=10.0, value=7.5, step=0.1,
-                                 help="Your cumulative GPA on a 10-point scale")
-        hardworking = st.slider("Hardworking Level", min_value=1, max_value=10, value=7,
-                                 help="1 = minimal effort, 10 = extremely dedicated")
-        year  = st.selectbox("Current Year", options=[1, 2, 3, 4], index=1)
-        credits = st.number_input("Credits Completed", min_value=0, max_value=200, value=60, step=5)
-
-        st.markdown("---")
-        st.markdown("**Subject Proficiencies** *(0–10)*")
-        cs   = st.number_input("💻 CS Proficiency",    min_value=0.0, max_value=10.0, value=7.0, step=0.5,
-                                help="Computer Science aptitude: algorithms, programming, systems")
-        math = st.number_input("📐 Math Proficiency",  min_value=0.0, max_value=10.0, value=6.0, step=0.5,
-                                help="Mathematical reasoning: calculus, linear algebra, discrete math")
-        stat = st.number_input("📊 Statistics Proficiency", min_value=0.0, max_value=10.0, value=6.5, step=0.5,
-                                help="Statistical thinking: probability, inference, data analysis")
-        is_  = st.number_input("🏢 IS Proficiency",    min_value=0.0, max_value=10.0, value=6.0, step=0.5,
-                                help="Information Systems: business processes, enterprise systems")
-        se   = st.number_input("⚙️ SE Proficiency",    min_value=0.0, max_value=10.0, value=6.5, step=0.5,
-                                help="Software Engineering: design patterns, architecture, testing")
-
-        st.markdown("---")
-        top_n = st.slider("Number of Recommendations", min_value=3, max_value=15, value=10)
-
-        submitted = st.button("🎯 Get Recommendations", use_container_width=True)
-
-        if submitted:
-            if not name.strip():
-                st.error("Please enter your name.")
-                return None
-
-            from utils.validators import build_student_dict, validate_student_profile
-            student = build_student_dict(
-                name=name, cgpa=cgpa, hardworking_level=hardworking,
-                cs_proficiency=cs, math_proficiency=math, stat_proficiency=stat,
-                is_proficiency=is_, se_proficiency=se,
-                year=year, credits_completed=credits,
-            )
-            valid, errors = validate_student_profile(student)
-            if not valid:
-                for err in errors:
-                    st.error(err)
-                return None
-
-            return {"student": student, "top_n": top_n}
-
-    return None
-
-
-# ─── Main content ─────────────────────────────────────────────────────────────
-
-def render_hero():
-    st.markdown('<div class="hero-title">CourseIQ</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="hero-sub">AI-powered course recommendations tailored to your unique academic profile. '
-        'Five specialized models — one per department — predict your success before you enroll.</div>',
-        unsafe_allow_html=True
-    )
-
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown('<div class="metric-card">📚 <b>60 Courses</b><br><span style="color:#8b949e;font-size:0.85rem">Across 5 departments</span></div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="metric-card">🧠 <b>10 ML Models</b><br><span style="color:#8b949e;font-size:0.85rem">Logistic + Linear per dept</span></div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="metric-card">🎯 <b>Prerequisite Aware</b><br><span style="color:#8b949e;font-size:0.85rem">Enforces course chains</span></div>', unsafe_allow_html=True)
-    with col4:
-        st.markdown('<div class="metric-card">⚡ <b>Instant Inference</b><br><span style="color:#8b949e;font-size:0.85rem">No database writes</span></div>', unsafe_allow_html=True)
-
-
-def render_profile_summary(student: dict):
-    st.markdown('<div class="section-header">👤 STUDENT PROFILE</div>', unsafe_allow_html=True)
-
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        st.markdown(f"### {student['name']}")
-        st.markdown(f"**Year {student['year']}** · {student['credits_completed']} credits")
-
-    with col2:
-        pills_html = "".join([
-            f'<span class="profile-pill">CGPA <b>{student["cgpa"]}</b></span>',
-            f'<span class="profile-pill">💪 Hardworking <b>{student["hardworking_level"]}/10</b></span>',
-            f'<span class="profile-pill" style="border-color:#4FC3F7">💻 CS <b>{student["cs_proficiency"]}</b></span>',
-            f'<span class="profile-pill" style="border-color:#81C784">📐 Math <b>{student["math_proficiency"]}</b></span>',
-            f'<span class="profile-pill" style="border-color:#FFB74D">📊 Stat <b>{student["stat_proficiency"]}</b></span>',
-            f'<span class="profile-pill" style="border-color:#CE93D8">🏢 IS <b>{student["is_proficiency"]}</b></span>',
-            f'<span class="profile-pill" style="border-color:#F48FB1">⚙️ SE <b>{student["se_proficiency"]}</b></span>',
-        ])
-        st.markdown(pills_html, unsafe_allow_html=True)
-
-
-def render_recommendations_table(df: pd.DataFrame):
-    st.markdown('<div class="section-header">🏆 TOP RECOMMENDATIONS</div>', unsafe_allow_html=True)
-
-    display_df = df.copy().reset_index()
-    display_df["Rank"] = display_df["rank"]
-    display_df["Code"] = display_df["course_code"]
-    display_df["Course"] = display_df["course_name"]
-    display_df["Dept"] = display_df["department"]
-    display_df["Difficulty"] = display_df["difficulty"].apply(lambda x: f"{x:.1f}/10")
-    display_df["Success %"] = (display_df["success_probability"] * 100).apply(lambda x: f"{x:.1f}%")
-    display_df["Grade"] = display_df["expected_grade"].apply(lambda x: f"{x:.1f}/10")
-    display_df["Score"] = display_df["recommendation_score"].apply(lambda x: f"{x:.2f}")
-    display_df["Readiness"] = display_df["readiness_label"]
-    display_df["Prereq"] = display_df["prereq_met"].apply(lambda x: "✅ Met" if x else "⚠️ Missing")
-
-    table_cols = ["Rank", "Code", "Course", "Dept", "Difficulty", "Success %", "Grade", "Score", "Readiness", "Prereq"]
-    styled = display_df[table_cols].style.apply(
-        lambda row: [
-            f"background-color: {'rgba(79,195,247,0.08)' if row['Dept']=='CS' else 'rgba(129,199,132,0.08)' if row['Dept']=='MATH' else 'rgba(255,183,77,0.08)' if row['Dept']=='STAT' else 'rgba(206,147,216,0.08)' if row['Dept']=='IS' else 'rgba(244,143,177,0.08)'}"
-        ] * len(table_cols),
-        axis=1,
-    )
-    st.dataframe(display_df[table_cols], use_container_width=True, hide_index=True)
-
-def render_prereq_warnings(df: pd.DataFrame):
-    warnings_df = df[~df["prereq_met"]]
-    if warnings_df.empty:
-        return
-
-    st.markdown('<div class="section-header">⚠️ PREREQUISITE WARNINGS</div>', unsafe_allow_html=True)
-    for _, row in warnings_df.iterrows():
-        st.markdown(
-            f'<div class="warning-box">{row["prereq_warning"]}</div>',
-            unsafe_allow_html=True
-        )
-
-
-def render_explanation_panel(df: pd.DataFrame, student: dict, recommender):
-    st.markdown('<div class="section-header">💡 WHY THESE RECOMMENDATIONS?</div>', unsafe_allow_html=True)
-
-    top3 = df.head(3)
-    cols = st.columns(3)
-    for i, (_, row) in enumerate(top3.iterrows()):
-        with cols[i]:
-            dept_color = DEPT_COLORS.get(row["department"], "#888")
-            explanation = recommender.get_student_explanation(student, row)
-            st.markdown(f"""
-            <div class="metric-card" style="border-left: 4px solid {dept_color}">
-                <b style="color:{dept_color}">#{i+1} {row['course_code']}</b><br>
-                <span style="font-size:0.85rem;color:#8b949e">{row['course_name']}</span><br><br>
-                <pre style="font-size:0.78rem;color:#cdd9e5;white-space:pre-wrap;font-family:'DM Sans',sans-serif">{explanation}</pre>
-            </div>
-            """, unsafe_allow_html=True)
-
-
-def render_visualizations(df: pd.DataFrame, student: dict):
-    st.markdown('<div class="section-header">📈 ANALYTICS</div>', unsafe_allow_html=True)
-
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Success Probability", "📝 Expected Grades", "🌐 Landscape", "🕸️ Proficiency Radar"])
-
-    with tab1:
-        st.plotly_chart(make_success_chart(df), use_container_width=True)
-
-    with tab2:
-        st.plotly_chart(make_grade_chart(df), use_container_width=True)
-
-    with tab3:
-        st.plotly_chart(make_scatter_chart(df), use_container_width=True)
-        st.caption("Bubble size reflects overall recommendation score. Top-right = high success + high grade.")
-
-    with tab4:
-        col_radar, col_info = st.columns([2, 1])
-        with col_radar:
-            st.plotly_chart(make_radar_chart(student), use_container_width=True)
-        with col_info:
-            st.markdown("**Proficiency Breakdown**")
-            profs = {
-                "💻 CS": student["cs_proficiency"],
-                "📐 Math": student["math_proficiency"],
-                "📊 Stat": student["stat_proficiency"],
-                "🏢 IS": student["is_proficiency"],
-                "⚙️ SE": student["se_proficiency"],
-            }
-            for label, val in profs.items():
-                emoji = "🟢" if val >= 7 else "🟡" if val >= 5 else "🔴"
-                st.markdown(f"{emoji} **{label}**: {val:.1f}/10")
-
-            strongest = max(profs, key=profs.get)
-            st.markdown(f"\n**Strongest domain**: {strongest}")
-            st.markdown(f"**Recommended focus**: Courses in your strong domains will yield highest predicted performance.")
-
-
-# ─── Entry Point ──────────────────────────────────────────────────────────────
-
-def main():
-    ensure_data_and_models()
-
-    render_hero()
     st.markdown("---")
 
-    result = render_sidebar()
+    # ── Top Recommendations (cards via iframe) ────────────────────────
+    st.markdown("## 🏆 Top Recommendations")
+    st.caption(f"Ranked by ensemble recommendation score · showing {len(recs)} courses")
 
-    if result is None:
-        # Landing state — show instructions
-        st.markdown("""
-        <div style="text-align:center; padding: 4rem 2rem; color: #8b949e;">
-            <div style="font-size:4rem;">🎓</div>
-            <h3 style="font-family:'Space Mono',monospace; color:#cdd9e5;">Ready to find your perfect courses?</h3>
-            <p>Enter your academic profile in the sidebar and click <b style="color:#e2b96f;">Get Recommendations</b>.</p>
-            <br>
-            <p style="font-size:0.9rem;">Five specialized ML models — trained on 500 student histories across 60 courses —
-            will predict your success probability and expected grade for every course,
-            then rank them to surface your best opportunities.</p>
-        </div>
-        """, unsafe_allow_html=True)
+    for i, r in enumerate(recs, 1):
+        dept      = r["department"]
+        color     = DEPT_COLORS.get(dept, "#6366f1")
+        bg        = DEPT_BG.get(dept, "#e0e7ff")
+        readiness = r["readiness_label"]
+        read_col  = {"High": "#16a34a", "Medium": "#d97706", "Low": "#dc2626"}.get(readiness, "#6b7280")
+        prereq_ok = r["prerequisite_met"]
+        prereq_text = "✅ All prerequisites met" if prereq_ok else f"⚠️ Missing: {r['prerequisite_code']} — {r['prerequisite_name']}"
+        prereq_style = ("background:#f0fdf4;border-left:4px solid #22c55e;color:#166534;"
+                        if prereq_ok else
+                        "background:#fef2f2;border-left:4px solid #ef4444;color:#991b1b;")
 
-        # Show department legend
-        st.markdown('<div class="section-header">🗂️ DEPARTMENT GUIDE</div>', unsafe_allow_html=True)
-        cols = st.columns(5)
-        dept_info = {
-            "CS": ("💻", "Computer Science", "15 courses", "#4FC3F7"),
-            "MATH": ("📐", "Mathematics", "12 courses", "#81C784"),
-            "STAT": ("📊", "Statistics", "10 courses", "#FFB74D"),
-            "IS": ("🏢", "Info Systems", "12 courses", "#CE93D8"),
-            "SE": ("⚙️", "Soft. Engineering", "11 courses", "#F48FB1"),
-        }
-        for i, (dept, (emoji, name, count, color)) in enumerate(dept_info.items()):
-            with cols[i]:
-                st.markdown(f"""
-                <div class="metric-card" style="border-left: 4px solid {color}; text-align:center">
-                    <div style="font-size:2rem">{emoji}</div>
-                    <b style="color:{color}">{dept}</b><br>
-                    <span style="font-size:0.85rem;color:#cdd9e5">{name}</span><br>
-                    <span style="font-size:0.75rem;color:#8b949e">{count}</span>
-                </div>
-                """, unsafe_allow_html=True)
-        return
+        card_html = f"""
+<style>
+.card{{background:#ffffff;border:1.5px solid #e5e7eb;border-radius:16px;padding:24px 28px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.04);font-family:'Inter',sans-serif;}}
+.card:hover{{border-color:{color};box-shadow:0 8px 24px rgba(0,0,0,0.09);}}
+.row{{display:flex;justify-content:space-between;align-items:flex-start;}}
+.badge{{display:inline-block;padding:5px 14px;border-radius:30px;font-size:12px;
+        font-weight:700;background:{bg};color:{color};border:1px solid {color}33;}}
+.metrics-row{{display:flex;gap:0;flex-wrap:nowrap;margin-top:18px;
+             background:#f9fafb;border-radius:12px;border:1px solid #f3f4f6;overflow:hidden;}}
+.metric-pill{{flex:1;padding:14px 10px;text-align:center;border-right:1px solid #f3f4f6;}}
+.metric-pill:last-child{{border-right:none;}}
+.ml{{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;font-weight:700;margin-bottom:5px;}}
+.mv{{font-size:16px;font-weight:800;color:#111827;}}
+.prereq{{padding:10px 16px;border-radius:0 8px 8px 0;font-size:13px;font-weight:600;
+         margin-top:16px;{prereq_style}}}
+.model-note{{font-size:11px;color:#9ca3af;margin-top:12px;font-weight:500;}}
+</style>
+<div class="card">
+  <div class="row">
+    <div>
+      <div style="font-size:22px;font-weight:800;color:#111827;display:flex;align-items:center;gap:12px;">
+        #{i} {r['course_code']} <span class="badge">{dept}</span>
+      </div>
+      <div style="font-size:15px;color:#6b7280;margin-top:6px;font-weight:500;">{r['course_name']}</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:34px;font-weight:900;color:{color};line-height:1;">{r['success_probability']*100:.1f}%</div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;font-weight:700;margin-top:4px;">Success Rate</div>
+    </div>
+  </div>
+  <div class="metrics-row">
+    <div class="metric-pill"><div class="ml">Grade</div><div class="mv">⭐ {r['expected_grade']}/10</div></div>
+    <div class="metric-pill"><div class="ml">Difficulty</div><div class="mv">⚡ {r['difficulty']}/10</div></div>
+    <div class="metric-pill"><div class="ml">Score</div><div class="mv">🏅 {r['recommendation_score']:.2f}</div></div>
+    <div class="metric-pill"><div class="ml">Readiness</div><div class="mv" style="color:{read_col};">{readiness}</div></div>
+    <div class="metric-pill"><div class="ml">Confidence</div><div class="mv">{r['confidence_label']}</div></div>
+  </div>
+  <div class="prereq">{prereq_text}</div>
+  <div class="model-note">🤖 Predicted by {r['model_used']}</div>
+</div>
+"""
+        render_html(card_html, height=230)
 
-    # ── Got recommendations ──
-    student = result["student"]
-    top_n   = result["top_n"]
+    # ── Why These Recommendations ─────────────────────────────────────
+    st.markdown("---")
+    with st.expander("💡 Why These Recommendations? (Reasoning + Feature Importances)", expanded=False):
+        for i, r in enumerate(recs[:5], 1):
+            dept = r["department"]
+            prof_map = {"CS": cs_prof, "MATH": math_prof, "STAT": stat_prof, "IS": is_prof, "SE": se_prof}
+            prof_val = prof_map.get(dept, cs_prof)
+            gap  = prof_val - r["difficulty"]
+            icon = "🟢" if gap >= 2 else ("🟡" if gap >= 0 else "🔴")
+            st.markdown(
+                f"**{i}. {r['course_code']} – {r['course_name']}**  \n"
+                f"- 🤖 *Model:* **{r['model_used']}**  \n"
+                f"- {icon} {dept} proficiency ({prof_val}) vs difficulty ({r['difficulty']:.1f}): gap = **{gap:+.1f}**  \n"
+                f"- 📊 Success: **{r['success_probability']*100:.1f}%** | Grade: **{r['expected_grade']}/10**  \n"
+                f"- 🎯 Confidence: **{r['confidence_label']}** (score: {r['confidence_score']:.2f})  \n"
+                f"- {'✅ Prerequisites met' if r['prerequisite_met'] else '⚠️ '+r['prerequisite_warning']}"
+            )
+            feat_imp = recommender.get_feature_importances(dept, top_n=5)
+            if feat_imp:
+                fi_df = pd.DataFrame(feat_imp)
+                fi_df["feature"] = fi_df["feature"].str.replace("_", " ").str.title()
+                fig_fi = px.bar(
+                    fi_df, x="importance", y="feature", orientation="h",
+                    title=f"Feature Importances – {dept} model",
+                    labels={"importance": "Importance", "feature": ""},
+                    color="importance",
+                    color_continuous_scale=["#bfdbfe", "#3b82f6"],
+                    text=fi_df["importance"].apply(lambda v: f"{v:.3f}"),
+                )
+                fig_fi.update_layout(
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                    font=dict(family="Inter", color="#374151", size=12),
+                    height=220, margin=dict(l=10, r=10, t=40, b=10),
+                    showlegend=False, coloraxis_showscale=False,
+                    yaxis=dict(autorange="reversed"),
+                )
+                fig_fi.update_traces(textposition="outside", marker_line_width=0)
+                st.plotly_chart(fig_fi, use_container_width=True, key=f"fi_{i}_{dept}")
+            st.markdown("---")
 
-    recommender = get_recommender()
+    # ── Analytics Quadrants (2 × 2) ───────────────────────────────────
+    st.markdown("## 📊 Analytics & Visualisations")
 
-    with st.spinner("🔮 Running department-specialized models..."):
-        df = recommender.recommend(student, top_n=top_n)
+    rec_df = pd.DataFrame(recs)
+    rec_df["label"]       = rec_df["course_code"] + " – " + rec_df["course_name"]
+    rec_df["success_pct"] = rec_df["success_probability"] * 100
 
-    if df.empty:
-        st.warning("No recommendations available. All courses may require prerequisites.")
-        return
-
-    render_profile_summary(student)
-    render_prereq_warnings(df)
-
-    st.markdown("")
-    render_recommendations_table(df)
-
-    st.markdown("")
-    render_explanation_panel(df, student, recommender)
-
-    st.markdown("")
-    render_visualizations(df, student)
-
-    # Department distribution summary
-    st.markdown('<div class="section-header">📊 DEPARTMENT DISTRIBUTION</div>', unsafe_allow_html=True)
-    dept_counts = df["department"].value_counts().reset_index()
-    dept_counts.columns = ["Department", "Count"]
-    fig_dist = px.pie(
-        dept_counts, values="Count", names="Department",
-        color="Department",
-        color_discrete_map=DEPT_COLORS,
-        hole=0.45,
+    LIGHT_LAYOUT = dict(
+        plot_bgcolor="#ffffff", paper_bgcolor="#ffffff",
+        font=dict(family="Inter", color="#9ca3af"),
+        margin=dict(t=55, b=100, l=10, r=10),
+        height=420,
     )
-    fig_dist.update_layout(
-        paper_bgcolor=PLOT_PAPER, plot_bgcolor=PLOT_BGCOLOR,
-        font=dict(color=FONT_COLOR),
-        height=320,
-        margin=dict(t=20, b=20, l=20, r=20),
-        legend=dict(bgcolor="#161b22", font=dict(color=FONT_COLOR)),
-    )
-    col_pie, col_stats = st.columns([1, 1])
-    with col_pie:
-        st.plotly_chart(fig_dist, use_container_width=True)
-    with col_stats:
-        st.markdown("**Recommendation Statistics**")
-        avg_success = df["success_probability"].mean() * 100
-        avg_grade   = df["expected_grade"].mean()
-        n_prereq_missing = (~df["prereq_met"]).sum()
-        avg_score   = df["recommendation_score"].mean()
 
-        st.metric("Avg Success Probability", f"{avg_success:.1f}%")
-        st.metric("Avg Expected Grade",      f"{avg_grade:.2f}/10")
-        st.metric("Prerequisite Warnings",   n_prereq_missing)
-        st.metric("Avg Recommendation Score", f"{avg_score:.2f}/10")
+    col_a, col_b = st.columns(2)
+    col_c, col_d = st.columns(2)
 
+    with col_a:
+        fig1 = px.bar(
+            rec_df, x="label", y="success_pct",
+            color="department", color_discrete_map=DEPT_COLORS,
+            title="Success Probability by Course",
+            labels={"success_pct": "Success (%)", "label": ""},
+            text=rec_df["success_pct"].apply(lambda v: f"{v:.0f}%"),
+        )
+        fig1.update_layout(**LIGHT_LAYOUT, xaxis_tickangle=-40)
+        fig1.update_traces(textposition="outside", marker_line_width=0)
+        st.plotly_chart(fig1, use_container_width=True)
 
-if __name__ == "__main__":
-    main()
+    with col_b:
+        fig2 = px.bar(
+            rec_df, x="label", y="expected_grade",
+            color="department", color_discrete_map=DEPT_COLORS,
+            title="Expected Grade by Course",
+            labels={"expected_grade": "Grade (0–10)", "label": ""},
+            text=rec_df["expected_grade"].apply(lambda v: f"{v:.1f}"),
+        )
+        fig2.update_layout(**LIGHT_LAYOUT, xaxis_tickangle=-40)
+        fig2.update_traces(textposition="outside", marker_line_width=0)
+        st.plotly_chart(fig2, use_container_width=True)
+
+    with col_c:
+        fig3 = px.scatter(
+            rec_df, x="success_pct", y="expected_grade",
+            color="department", color_discrete_map=DEPT_COLORS,
+            size="recommendation_score", hover_name="label",
+            title="Success vs Grade Landscape",
+            labels={"success_pct": "Success (%)", "expected_grade": "Expected Grade"},
+        )
+        fig3.update_layout(**{**LIGHT_LAYOUT, "margin": dict(t=55, b=20, l=10, r=10)})
+        st.plotly_chart(fig3, use_container_width=True)
+
+    with col_d:
+        cats   = ["CS", "Math", "Statistics", "IS", "SE"]
+        vals   = [cs_prof, math_prof, stat_prof, is_prof, se_prof]
+        fig4   = go.Figure()
+        fig4.add_trace(go.Scatterpolar(
+            r=vals + [vals[0]], theta=cats + [cats[0]],
+            fill="toself",
+            fillcolor="rgba(99,102,241,0.18)",
+            line=dict(color="#050505", width=3),
+            name="Proficiency",
+        ))
+        fig4.update_layout(
+            polar=dict(
+                bgcolor="#ffffff",
+                radialaxis=dict(visible=True, range=[0, 10], gridcolor="#050505"),
+                angularaxis=dict(gridcolor="#050505"),
+            ),
+            plot_bgcolor="#ffffff", paper_bgcolor="#ffffff",
+            font=dict(family="Inter", color="#050505"),
+            title="Proficiency Radar", showlegend=False, height=420,
+        )
+        st.plotly_chart(fig4, use_container_width=True)
+
+# ── Landing state ────────────────────────────────────────────────────
+else:
+    st.markdown("### 👈 Enter your profile in the sidebar to get AI-powered course recommendations")
+    st.markdown("")
+
+    # Stats row
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Ensemble Models", "20")
+    c2.metric("Departments", "5")
+    c3.metric("Available Courses", "60")
+
+    st.markdown("")
+
+    render_html("""
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+.wrap{background:#ffffff;border:1px solid #e5e7eb;border-radius:20px;padding:36px 40px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.05);}
+.title{font-size:24px;font-weight:800;color:#111827;margin-bottom:10px;}
+.sub{font-size:15px;color:#6b7280;line-height:1.7;margin-bottom:30px;max-width:720px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.step{background:#f9fafb;border:1px solid #f3f4f6;border-radius:14px;padding:24px;}
+.num{display:inline-flex;width:36px;height:36px;align-items:center;justify-content:center;
+     background:#eef2ff;color:#4f46e5;border-radius:9px;font-weight:800;font-size:15px;margin-bottom:14px;}
+.sh{font-size:16px;font-weight:700;color:#111827;margin-bottom:8px;}
+.sp{font-size:14px;color:#6b7280;line-height:1.65;}
+</style>
+<div class="wrap">
+  <div class="title">How CourseIQ Works</div>
+  <div class="sub">CourseIQ uses a <strong>Multi-Model Ensemble Intelligence Engine</strong> to forecast your academic outcomes
+                   and match you to courses where you are most likely to thrive.</div>
+  <div class="grid">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="sh">Department-Specific Models</div>
+      <div class="sp">Every major (CS, Math, IS, SE, Stat) is evaluated by 4 specialized ML models trained exclusively
+                       on historical student data for that department.</div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="sh">Algorithmic Voting Consensus</div>
+      <div class="sp">Gradient Boosting + Random Forest vote on pass/fail; Gradient Boosting + SVR predict your
+                       expected grade. Results are merged via weighted consensus.</div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="sh">Confidence &amp; Pre-req Guards</div>
+      <div class="sp">A Confidence Score reflects model agreement. Prerequisite checks ensure you are
+                       never recommended a course you are not eligible for.</div>
+    </div>
+  </div>
+</div>
+""", height=390)

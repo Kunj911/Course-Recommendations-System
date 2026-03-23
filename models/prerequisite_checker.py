@@ -1,135 +1,156 @@
 """
-models/prerequisite_checker.py
---------------------------------
-Validates whether a student meets course prerequisites and computes a
-"readiness score" that reflects both completion status and prior performance.
+Prerequisite Checker
+====================
+Validates whether a student has completed the prerequisite courses
+required for a given target course and computes a readiness score.
 """
 
 import sqlite3
 import os
-from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass, field
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "database", "course_recommendation.db")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(BASE_DIR, "database", "course_recommendation.db")
+
+
+@dataclass
+class PrerequisiteResult:
+    """Container for prerequisite check output."""
+    course_code: str
+    course_name: str
+    prerequisite_met: bool = True
+    prerequisite_code: str | None = None
+    prerequisite_name: str | None = None
+    prerequisite_grade: float | None = None
+    readiness_score: float = 1.0  # 0-1 scale
+    warning_message: str = ""
+    warnings: list[str] = field(default_factory=list)
 
 
 class PrerequisiteChecker:
-    """
-    Checks prerequisite chains for courses and returns structured warnings.
+    """Check and report prerequisite status for courses."""
 
-    For custom (non-database) students, we assume no prior courses are completed
-    unless the user explicitly indicates year/credits, which we use as a proxy.
-    """
+    def __init__(self, db_path: str = DB_PATH):
+        self._db_path = db_path
+        self._course_cache: dict = {}
+        self._load_course_graph()
 
-    def __init__(self):
-        self._course_cache: Optional[Dict] = None
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
 
-    def _load_courses(self) -> Dict:
-        """Lazy-load course data including prerequisite relationships."""
-        if self._course_cache is not None:
-            return self._course_cache
-
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT c.course_id, c.course_code, c.course_name, c.department,
-                   c.difficulty_level, c.prerequisite_course_id, c.is_advanced,
-                   p.course_code AS prereq_code, p.course_name AS prereq_name
-            FROM courses c
-            LEFT JOIN courses p ON c.prerequisite_course_id = p.course_id
-        """)
-        cols = [d[0] for d in cursor.description]
-        rows = cursor.fetchall()
+    def _load_course_graph(self):
+        """Cache the full course table in memory for fast lookups."""
+        conn = sqlite3.connect(self._db_path)
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT course_id, course_code, course_name, department, "
+            "difficulty_level, avg_workload_hours, prerequisite_course_id, "
+            "is_advanced FROM courses"
+        ).fetchall()
         conn.close()
 
-        courses = {}
-        for row in rows:
-            d = dict(zip(cols, row))
-            courses[d["course_id"]] = d
+        for r in rows:
+            self._course_cache[r["course_id"]] = dict(r)
+        # Also index by code for convenience
+        self._code_to_id = {
+            v["course_code"]: k for k, v in self._course_cache.items()
+        }
 
-        self._course_cache = courses
-        return courses
+    def _get_prerequisite_id(self, course_id: int) -> int | None:
+        course = self._course_cache.get(course_id)
+        if course:
+            return course["prerequisite_course_id"]
+        return None
 
-    def check_prerequisites(
-        self,
-        course_id: int,
-        completed_course_ids: List[int],
-    ) -> Tuple[bool, Optional[str]]:
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    def check(self, course_id: int,
+              completed_course_ids: set[int] | None = None,
+              completed_grades: dict[int, float] | None = None) -> PrerequisiteResult:
+        """Check prerequisite status for one course.
+
+        Parameters
+        ----------
+        course_id : int
+            The target course to check.
+        completed_course_ids : set[int] | None
+            Course IDs the student has already completed.
+            When ``None`` (custom student entry), the student is assumed
+            to have completed *nothing*, so all prereqs will trigger warnings.
+        completed_grades : dict[int, float] | None
+            Mapping of course_id → grade for completed courses.
+
+        Returns
+        -------
+        PrerequisiteResult
         """
-        Check if a student has met the prerequisite for a given course.
+        course = self._course_cache.get(course_id)
+        if course is None:
+            return PrerequisiteResult(
+                course_code="?", course_name="Unknown",
+                prerequisite_met=True,
+            )
 
-        Args:
-            course_id: Target course to check.
-            completed_course_ids: List of course IDs the student has passed.
-
-        Returns:
-            (met: bool, warning_message: Optional[str])
-        """
-        courses = self._load_courses()
-        course = courses.get(course_id)
-        if not course:
-            return True, None  # Unknown course — assume no prereq
-
-        prereq_id = course.get("prerequisite_course_id")
-        if not prereq_id:
-            return True, None  # No prerequisite
-
-        prereq_met = prereq_id in completed_course_ids
-        if prereq_met:
-            return True, None
-
-        # Build descriptive warning
-        prereq_code = course.get("prereq_code", "Unknown")
-        prereq_name = course.get("prereq_name", "Unknown Course")
-        target_code = course.get("course_code", "Unknown")
-        target_name = course.get("course_name", "Unknown Course")
-
-        warning = (
-            f"⚠️ Warning: {prereq_code} ({prereq_name}) is a prerequisite for "
-            f"{target_code} ({target_name}). You have not completed {prereq_code}."
+        prereq_id = course["prerequisite_course_id"]
+        result = PrerequisiteResult(
+            course_code=course["course_code"],
+            course_name=course["course_name"],
         )
-        return False, warning
 
-    def compute_readiness_score(
-        self,
-        course_id: int,
-        completed_course_ids: List[int],
-        prior_grades: Dict[int, float],
-    ) -> float:
-        """
-        Compute a readiness score [0-1] based on prerequisite completion and grade quality.
+        # No prerequisite → always met
+        if prereq_id is None:
+            result.prerequisite_met = True
+            result.readiness_score = 1.0
+            return result
 
-        A score of 1.0 means all prerequisites met with excellent grades.
-        A score of 0.0 means prerequisite not completed at all.
+        prereq = self._course_cache.get(prereq_id, {})
+        result.prerequisite_code = prereq.get("course_code", "?")
+        result.prerequisite_name = prereq.get("course_name", "Unknown")
 
-        Args:
-            course_id: Target course.
-            completed_course_ids: Courses the student has passed.
-            prior_grades: Mapping of course_id -> grade for completed courses.
-        """
-        courses = self._load_courses()
-        course = courses.get(course_id)
-        if not course:
-            return 1.0
+        completed = completed_course_ids or set()
+        grades = completed_grades or {}
 
-        prereq_id = course.get("prerequisite_course_id")
-        if not prereq_id:
-            return 1.0  # No prerequisite → full readiness
+        if prereq_id in completed:
+            result.prerequisite_met = True
+            grade = grades.get(prereq_id)
+            if grade is not None:
+                result.prerequisite_grade = grade
+                # Readiness is proportional to how well the prereq was mastered
+                result.readiness_score = min(1.0, grade / 10.0)
+            else:
+                result.readiness_score = 0.7  # completed but unknown grade
+        else:
+            result.prerequisite_met = False
+            result.readiness_score = 0.3  # penalise missing prereqs
+            warning = (
+                f"⚠️ Warning: {result.prerequisite_code} "
+                f"({result.prerequisite_name}) is a prerequisite for "
+                f"{result.course_code} ({result.course_name}). "
+                f"You have not completed {result.prerequisite_code}."
+            )
+            result.warning_message = warning
+            result.warnings.append(warning)
 
-        if prereq_id not in completed_course_ids:
-            return 0.0  # Missing prerequisite → zero readiness
+        return result
 
-        # Readiness scales with prerequisite grade quality
-        # A grade of 5 (pass threshold) → 0.5, grade of 10 → 1.0
-        prereq_grade = prior_grades.get(prereq_id, 5.0)
-        readiness = prereq_grade / 10.0
+    def check_all(self, course_ids: list[int],
+                  completed_course_ids: set[int] | None = None,
+                  completed_grades: dict[int, float] | None = None
+                  ) -> dict[int, PrerequisiteResult]:
+        """Batch-check prerequisites for multiple courses."""
+        return {
+            cid: self.check(cid, completed_course_ids, completed_grades)
+            for cid in course_ids
+        }
 
-        return round(min(1.0, max(0.0, readiness)), 3)
+    def get_course_info(self, course_id: int) -> dict | None:
+        return self._course_cache.get(course_id)
 
-    def get_all_course_prerequisites(self) -> Dict[int, Optional[int]]:
-        """Return mapping of course_id -> prerequisite_course_id (None if no prereq)."""
-        courses = self._load_courses()
-        return {cid: c.get("prerequisite_course_id") for cid, c in courses.items()}
+    def get_all_courses(self) -> list[dict]:
+        return list(self._course_cache.values())
 
-    def get_all_courses(self) -> Dict[int, Dict]:
-        """Expose full course dictionary for use in recommender."""
-        return self._load_courses()
+    def get_course_id_by_code(self, code: str) -> int | None:
+        return self._code_to_id.get(code)

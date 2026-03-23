@@ -1,79 +1,43 @@
 """
-setup_database.py
------------------
-Creates the SQLite database schema for the Course Recommendation System.
-Run this ONCE before data generation or app launch.
+Database Setup Script
+=====================
+Initializes the SQLite database by executing the schema.sql file.
+Creates the database directory and file if they don't exist.
 """
 
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "database", "course_recommendation.db")
-SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "database", "schema.sql")
+# Resolve paths relative to this script's location
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_DIR = os.path.join(BASE_DIR, "database")
+DB_PATH = os.path.join(DB_DIR, "course_recommendation.db")
+SCHEMA_PATH = os.path.join(DB_DIR, "schema.sql")
 
 
-SCHEMA_SQL = """
--- Students: Core academic profile with subject-specific proficiencies
-CREATE TABLE IF NOT EXISTS students (
-    student_id          INTEGER PRIMARY KEY,
-    name                TEXT NOT NULL,
-    cgpa                REAL NOT NULL CHECK(cgpa BETWEEN 0 AND 10),
-    hardworking_level   INTEGER NOT NULL CHECK(hardworking_level BETWEEN 1 AND 10),
-    cs_proficiency      REAL NOT NULL CHECK(cs_proficiency BETWEEN 0 AND 10),
-    math_proficiency    REAL NOT NULL CHECK(math_proficiency BETWEEN 0 AND 10),
-    stat_proficiency    REAL NOT NULL CHECK(stat_proficiency BETWEEN 0 AND 10),
-    is_proficiency      REAL NOT NULL CHECK(is_proficiency BETWEEN 0 AND 10),
-    se_proficiency      REAL NOT NULL CHECK(se_proficiency BETWEEN 0 AND 10),
-    credits_completed   INTEGER NOT NULL DEFAULT 0,
-    year                INTEGER NOT NULL CHECK(year BETWEEN 1 AND 4)
-);
+def setup_database() -> str:
+    """Create the database and apply the schema.
 
--- Courses: Academic catalog with department classification and prerequisites
-CREATE TABLE IF NOT EXISTS courses (
-    course_id               INTEGER PRIMARY KEY,
-    course_code             TEXT UNIQUE NOT NULL,
-    course_name             TEXT NOT NULL,
-    department              TEXT NOT NULL CHECK(department IN ('CS', 'MATH', 'STAT', 'IS', 'SE')),
-    credits                 INTEGER NOT NULL,
-    difficulty_level        REAL NOT NULL CHECK(difficulty_level BETWEEN 0 AND 10),
-    avg_workload_hours      REAL NOT NULL,
-    prerequisite_course_id  INTEGER REFERENCES courses(course_id),
-    is_advanced             BOOLEAN NOT NULL DEFAULT FALSE
-);
+    Returns:
+        str: The absolute path to the created database file.
+    """
+    os.makedirs(DB_DIR, exist_ok=True)
 
--- Enrollments: Student-course interaction history for model training
-CREATE TABLE IF NOT EXISTS enrollments (
-    enrollment_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id      INTEGER NOT NULL REFERENCES students(student_id),
-    course_id       INTEGER NOT NULL REFERENCES courses(course_id),
-    semester        TEXT NOT NULL,
-    grade           REAL CHECK(grade BETWEEN 0 AND 10),
-    passed          BOOLEAN,
-    hours_spent     REAL,
-    UNIQUE(student_id, course_id, semester)
-);
+    # Remove stale database so we start from a clean state
+    if os.path.exists(DB_PATH):
+        os.remove(DB_PATH)
+        print(f"[RESET] Removed existing database at {DB_PATH}")
 
-CREATE INDEX IF NOT EXISTS idx_enrollments_student ON enrollments(student_id);
-CREATE INDEX IF NOT EXISTS idx_enrollments_course ON enrollments(course_id);
-CREATE INDEX IF NOT EXISTS idx_courses_department ON courses(department);
-"""
-
-
-def setup_database() -> None:
-    """Create the database directory and initialize schema."""
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-
-    # Write schema file for reference
-    with open(SCHEMA_PATH, "w") as f:
-        f.write(SCHEMA_SQL)
+    with open(SCHEMA_PATH, "r") as f:
+        schema_sql = f.read()
 
     conn = sqlite3.connect(DB_PATH)
-    try:
-        conn.executescript(SCHEMA_SQL)
-        conn.commit()
-        print(f"✅ Database initialized at: {DB_PATH}")
-    finally:
-        conn.close()
+    conn.executescript(schema_sql)
+    conn.commit()
+    conn.close()
+
+    print(f"[OK] Database created successfully at {DB_PATH}")
+    return DB_PATH
 
 
 if __name__ == "__main__":
