@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>CourseIQ Analytics Dashboard</title>
     <script>
         const originalWarn = console.warn;
-        console.warn = function(...args) {
+        console.warn = function (...args) {
             if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
             originalWarn.apply(console, args);
         };
     </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -45,308 +49,319 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(201, 167, 74, 0.2);
         }
+
         .chart-grid-line {
             stroke: rgba(201, 167, 74, 0.1);
         }
     </style>
 </head>
+
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-body">
-<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
-    <div class="layout-container flex h-full grow flex-col">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 px-6 py-4 lg:px-10 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
-            <div class="flex items-center gap-8">
-                <a href="landing.html" class="flex items-center gap-4 text-primary hover:opacity-80 transition-opacity">
-                    <div class="size-8">
-                        <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"></path>
-                        </svg>
-                    </div>
-                    <h2 class="text-xl font-display font-bold leading-tight tracking-tight uppercase">CourseIQ</h2>
-                </a>
-                <nav class="hidden md:flex items-center gap-6">
-                    <a class="text-slate-400 hover:text-primary text-sm font-medium transition-colors font-mono" href="index.html">DASHBOARD</a>
-                    <a class="text-slate-400 hover:text-primary text-sm font-medium transition-colors font-mono" href="profile.html">PROFILE</a>
-                    <a class="text-primary text-sm font-bold border-b-2 border-primary pb-1 font-mono" href="analytics.html">ANALYTICS</a>
-                    <a class="text-slate-400 hover:text-primary text-sm font-medium transition-colors font-mono" href="#">FACULTY</a>
-                    <a class="text-slate-400 hover:text-primary text-sm font-medium transition-colors font-mono" href="#">REPORTS</a>
-                </nav>
-            </div>
-            <div class="flex flex-1 justify-end gap-6 items-center">
-                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=k96HI5LKSkWwaDkGNL1pYZjTMjXMmtpLtBv25QzA_u5UM1FTWDcyNENWOU9LOFhIQjk5WkJCTlA3QS4u" target="_blank" class="hidden xl:block text-[10px] font-mono font-bold uppercase tracking-widest text-primary border border-primary/20 px-4 py-2 rounded-lg hover:bg-primary/10 transition-all">SUBMIT REVIEW</a>
-                <label class="hidden lg:flex flex-col min-w-40 h-10 max-w-64">
-                    <div class="flex w-full flex-1 items-stretch rounded-lg h-full overflow-hidden border border-primary/20 bg-surface-dark/50">
-                        <div class="text-primary/60 flex items-center justify-center pl-4 pr-2">
-                            <span class="material-symbols-outlined !text-xl">search</span>
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <header
+                class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 px-6 py-4 lg:px-10 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+                <div class="flex items-center gap-8">
+                    <a href="landing.html"
+                        class="flex items-center gap-4 text-primary hover:opacity-80 transition-opacity">
+                        <div class="size-8">
+                            <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z">
+                                </path>
+                            </svg>
                         </div>
-                        <input class="w-full bg-transparent border-none text-slate-100 focus:ring-0 placeholder:text-primary/40 text-sm font-mono" placeholder="SEARCH DATASET" value=""/>
-                    </div>
-                </label>
-                <div class="flex gap-4">
-                    <button class="relative flex items-center justify-center rounded-lg h-10 w-10 bg-surface-dark border border-primary/20 text-primary hover:bg-primary/10 transition-colors">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full"></span>
-                    </button>
-                    <div id="header-avatar" class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-primary/30" style='background-image: url("https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=12110e&bold=true");'></div>
+                        <h2 class="text-xl font-display font-bold leading-tight tracking-tight uppercase">CourseIQ</h2>
+                    </a>
+                    <nav class="hidden md:flex items-center gap-6">
+                        <a class="text-slate-400 hover:text-primary text-sm font-medium transition-colors font-mono"
+                            href="index.html">DASHBOARD</a>
+                        <a class="text-slate-400 hover:text-primary text-sm font-medium transition-colors font-mono"
+                            href="profile.html">PROFILE</a>
+                        <a class="text-primary text-sm font-bold border-b-2 border-primary pb-1 font-mono"
+                            href="analytics.html">ANALYTICS</a>
+                    </nav>
                 </div>
-            </div>
-        </header>
+                <div class="flex flex-1 justify-end gap-6 items-center">
+                    <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=k96HI5LKSkWwaDkGNL1pYZjTMjXMmtpLtBv25QzA_u5UM1FTWDcyNENWOU9LOFhIQjk5WkJCTlA3QS4u"
+                        target="_blank"
+                        class="hidden xl:block text-[10px] font-mono font-bold uppercase tracking-widest text-primary border border-primary/20 px-4 py-2 rounded-lg hover:bg-primary/10 transition-all">SUBMIT
+                        REVIEW</a>
+                    <label class="hidden lg:flex flex-col min-w-40 h-10 max-w-64">
 
-        <main class="flex-1 px-6 lg:px-10 py-8 max-w-[1600px] mx-auto w-full">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-primary/10 pb-6">
-                <div>
-                    <h1 class="text-4xl font-display font-bold text-slate-100 mb-2">Academic Performance</h1>
-                    <p class="text-primary/60 font-mono text-sm tracking-wider uppercase">Ensemble Intelligence Suite • Real-Time Analysis</p>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="fetchAnalytics()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-xs font-mono font-bold text-primary hover:bg-primary/20 transition-all">
-                        <span class="material-symbols-outlined !text-sm">refresh</span> REFRESH
-                    </button>
-                </div>
-            </div>
 
-            <!-- Department Success Charts -->
-            <div id="dept-charts" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-6 flex items-center justify-center h-56">
-                    <p class="text-slate-500 font-mono text-sm"><span class="material-symbols-outlined text-primary animate-spin mr-2 align-middle">progress_activity</span> Loading department analytics…</p>
-                </div>
-            </div>
-
-            <!-- Departmental Landscape Scatter -->
-            <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-8 relative overflow-hidden">
-                <div class="flex justify-between items-center mb-10">
-                    <div>
-                        <h3 class="text-xl font-display font-bold text-slate-100">Departmental Landscape Analysis</h3>
-                        <p class="text-sm font-mono text-primary/60">Success Probability vs. Average Grade</p>
-                    </div>
+                    </label>
                     <div class="flex gap-4">
-                        <button class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-dark border border-primary/20 text-xs font-mono text-slate-300 hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined !text-sm">filter_list</span> FILTER
-                        </button>
-                        <button class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-dark border border-primary/20 text-xs font-mono text-slate-300 hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined !text-sm">download</span> EXPORT
-                        </button>
+                        <div id="header-avatar"
+                            class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-primary/30"
+                            style='background-image: url("https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=12110e&bold=true");'>
+                        </div>
                     </div>
                 </div>
-                
-                <div id="scatter-plot" class="relative h-[400px] w-full border-l border-b border-primary/10">
-                    <div class="absolute top-0 left-0 w-1/2 h-1/2 border-r border-b border-primary/5 bg-primary/5 p-4 flex flex-col justify-start">
-                        <span class="text-[10px] font-mono text-primary/30 uppercase tracking-widest">High Success / Low Grade</span>
-                        <span class="text-xs font-mono text-primary/40 mt-1">EASY WINS</span>
-                    </div>
-                    <div class="absolute top-0 right-0 w-1/2 h-1/2 border-b border-primary/5 bg-emerald-500/5 p-4 text-right">
-                        <span class="text-[10px] font-mono text-emerald-400/40 uppercase tracking-widest">High Success / High Grade</span>
-                        <span class="text-xs font-mono text-emerald-400/60 mt-1 block font-bold">SWEET SPOT</span>
-                    </div>
-                    <div class="absolute bottom-0 left-0 w-1/2 h-1/2 border-r border-primary/5 bg-red-500/5 p-4 flex flex-col justify-end">
-                        <span class="text-[10px] font-mono text-red-400/30 uppercase tracking-widest">Low Success / Low Grade</span>
-                        <span class="text-xs font-mono text-red-400/50 mt-1">CRITICAL ZONE</span>
-                    </div>
-                    <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-amber-500/5 p-4 text-right flex flex-col justify-end">
-                        <span class="text-[10px] font-mono text-amber-400/40 uppercase tracking-widest">Low Success / High Grade</span>
-                        <span class="text-xs font-mono text-amber-400/60 mt-1">CHALLENGE AREA</span>
-                    </div>
-                    <!-- Dynamic dots will be injected here -->
-                    <div class="absolute -left-12 top-1/2 -rotate-90 text-[10px] font-mono text-primary/40 uppercase tracking-widest whitespace-nowrap">SUCCESS PROBABILITY</div>
-                    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-mono text-primary/40 uppercase tracking-widest">AVERAGE GRADE</div>
-                </div>
-            </div>
+            </header>
 
-            <!-- Feature Importances -->
-            <div id="feature-importance-section" class="mt-8 bg-surface-dark/30 rounded-xl border border-primary/10 p-8">
-                <h3 class="text-xl font-display font-bold text-slate-100 mb-6">Feature Importance by Department</h3>
-                <div id="feature-bars" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <p class="text-slate-500 font-mono text-sm col-span-full text-center py-8">
-                        <span class="material-symbols-outlined text-primary animate-spin mr-2 align-middle">progress_activity</span> Loading feature importances…
-                    </p>
+            <main class="flex-1 px-6 lg:px-10 py-8 max-w-[1600px] mx-auto w-full">
+                <div
+                    class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-primary/10 pb-6">
+                    <div>
+                        <h1 class="text-4xl font-display font-bold text-slate-100 mb-2">Academic Performance</h1>
+                        <p class="text-primary/60 font-mono text-sm tracking-wider uppercase">Ensemble Intelligence
+                            Suite • Real-Time Analysis</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="fetchAnalytics()"
+                            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-xs font-mono font-bold text-primary hover:bg-primary/20 transition-all">
+                            <span class="material-symbols-outlined !text-sm">refresh</span> REFRESH
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </main>
 
-        <footer class="border-t border-primary/10 py-6 px-10 flex flex-col md:flex-row justify-between items-center gap-4 bg-background-dark">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-mono text-primary/40 uppercase">&copy; 2024 CourseIQ Systems</span>
-                <span class="size-1 rounded-full bg-primary/20"></span>
-                <span class="text-xs font-mono text-primary/40 uppercase">V 4.2.0-ALMA</span>
-            </div>
-            <div class="flex gap-6">
-                <a class="text-[10px] font-mono text-primary/60 hover:text-primary transition-colors" href="#">PRIVACY POLICY</a>
-                <a class="text-[10px] font-mono text-primary/60 hover:text-primary transition-colors" href="#">DATA LICENSING</a>
-                <a class="text-[10px] font-mono text-primary/60 hover:text-primary transition-colors" href="#">SYSTEM STATUS</a>
-            </div>
-        </footer>
+                <!-- Department Success Charts -->
+                <div id="dept-charts" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div
+                        class="bg-surface-dark/30 rounded-xl border border-primary/10 p-6 flex items-center justify-center h-56">
+                        <p class="text-slate-500 font-mono text-sm"><span
+                                class="material-symbols-outlined text-primary animate-spin mr-2 align-middle">progress_activity</span>
+                            Loading department analytics…</p>
+                    </div>
+                </div>
+
+                <!-- Departmental Landscape Scatter -->
+                <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-8 relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-10">
+                        <div>
+                            <h3 class="text-xl font-display font-bold text-slate-100">Departmental Landscape Analysis
+                            </h3>
+                            <p class="text-sm font-mono text-primary/60">Success Probability vs. Average Grade</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <button
+                                class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-dark border border-primary/20 text-xs font-mono text-slate-300 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined !text-sm">filter_list</span> FILTER
+                            </button>
+                            <button
+                                class="flex items-center gap-2 px-3 py-1.5 rounded bg-surface-dark border border-primary/20 text-xs font-mono text-slate-300 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined !text-sm">download</span> EXPORT
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="scatter-plot" class="relative h-[400px] w-full border-l border-b border-primary/10">
+                        <div
+                            class="absolute top-0 left-0 w-1/2 h-1/2 border-r border-b border-primary/5 bg-primary/5 p-4 flex flex-col justify-start">
+                            <span class="text-[10px] font-mono text-primary/30 uppercase tracking-widest">High Success /
+                                Low Grade</span>
+                            <span class="text-xs font-mono text-primary/40 mt-1">EASY WINS</span>
+                        </div>
+                        <div
+                            class="absolute top-0 right-0 w-1/2 h-1/2 border-b border-primary/5 bg-emerald-500/5 p-4 text-right">
+                            <span class="text-[10px] font-mono text-emerald-400/40 uppercase tracking-widest">High
+                                Success / High Grade</span>
+                            <span class="text-xs font-mono text-emerald-400/60 mt-1 block font-bold">SWEET SPOT</span>
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 w-1/2 h-1/2 border-r border-primary/5 bg-red-500/5 p-4 flex flex-col justify-end">
+                            <span class="text-[10px] font-mono text-red-400/30 uppercase tracking-widest">Low Success /
+                                Low Grade</span>
+                            <span class="text-xs font-mono text-red-400/50 mt-1">CRITICAL ZONE</span>
+                        </div>
+                        <div
+                            class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-amber-500/5 p-4 text-right flex flex-col justify-end">
+                            <span class="text-[10px] font-mono text-amber-400/40 uppercase tracking-widest">Low Success
+                                / High Grade</span>
+                            <span class="text-xs font-mono text-amber-400/60 mt-1">CHALLENGE AREA</span>
+                        </div>
+                        <!-- Dynamic dots will be injected here -->
+                        <div
+                            class="absolute -left-12 top-1/2 -rotate-90 text-[10px] font-mono text-primary/40 uppercase tracking-widest whitespace-nowrap">
+                            SUCCESS PROBABILITY</div>
+                        <div
+                            class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-mono text-primary/40 uppercase tracking-widest">
+                            AVERAGE GRADE</div>
+                    </div>
+                </div>
+
+                <!-- Feature Importances -->
+                <div id="feature-importance-section"
+                    class="mt-8 bg-surface-dark/30 rounded-xl border border-primary/10 p-8">
+                    <h3 class="text-xl font-display font-bold text-slate-100 mb-6">Feature Importance by Department</h3>
+                    <div id="feature-bars" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <p class="text-slate-500 font-mono text-sm col-span-full text-center py-8">
+                            <span
+                                class="material-symbols-outlined text-primary animate-spin mr-2 align-middle">progress_activity</span>
+                            Loading feature importances…
+                        </p>
+                    </div>
+                </div>
+            </main>
+
+            <footer
+                class="border-t border-primary/10 py-6 px-10 flex flex-col md:flex-row justify-between items-center gap-4 bg-background-dark">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono text-primary/40 uppercase">&copy; 2024 CourseIQ Systems</span>
+                    <span class="size-1 rounded-full bg-primary/20"></span>
+                    <span class="text-xs font-mono text-primary/40 uppercase">V 4.2.0-ALMA</span>
+                </div>
+                <div class="flex gap-6">
+                    <a class="text-[10px] font-mono text-primary/60 hover:text-primary transition-colors"
+                        href="#">PRIVACY
+                        POLICY</a>
+                    <a class="text-[10px] font-mono text-primary/60 hover:text-primary transition-colors" href="#">DATA
+                        LICENSING</a>
+                    <a class="text-[10px] font-mono text-primary/60 hover:text-primary transition-colors"
+                        href="#">SYSTEM
+                        STATUS</a>
+                </div>
+            </footer>
+        </div>
     </div>
-</div>
-<script>
-    const API_BASE = 'http://localhost:8000';
-    const DEPT_COLORS = {
-        CS: { bg: 'rgba(16,185,129,', label: 'emerald-400', icon: 'code' },
-        MATH: { bg: 'rgba(201,167,74,', label: 'primary', icon: 'calculate' },
-        STAT: { bg: 'rgba(99,102,241,', label: 'indigo-400', icon: 'bar_chart' },
-        IS: { bg: 'rgba(244,63,94,', label: 'rose-400', icon: 'security' },
-        SE: { bg: 'rgba(251,146,60,', label: 'orange-400', icon: 'engineering' }
-    };
-    const DEPT_DOT_COLORS = { CS: 'bg-emerald-500', MATH: 'bg-primary', STAT: 'bg-indigo-500', IS: 'bg-rose-500', SE: 'bg-orange-500' };
-    const DEPT_SHADOW = { CS: 'shadow-emerald-500/30', MATH: 'shadow-primary/30', STAT: 'shadow-indigo-500/30', IS: 'shadow-rose-500/30', SE: 'shadow-orange-500/30' };
-
-    function buildProfilePayload() {
-        return {
-            name: `${localStorage.getItem('studentFirstName') || 'Alex'} ${localStorage.getItem('studentLastName') || 'Chen'}`,
-            cgpa: parseFloat(localStorage.getItem('studentCgpa') || '7.5'),
-            hardworking_level: parseInt(localStorage.getItem('studentHardworking') || '7'),
-            cs_proficiency: parseFloat(localStorage.getItem('studentCsProf') || '7.0'),
-            math_proficiency: parseFloat(localStorage.getItem('studentMathProf') || '6.0'),
-            stat_proficiency: parseFloat(localStorage.getItem('studentStatProf') || '6.5'),
-            is_proficiency: parseFloat(localStorage.getItem('studentIsProf') || '6.0'),
-            se_proficiency: parseFloat(localStorage.getItem('studentSeProf') || '6.5'),
-            credits_completed: parseInt(localStorage.getItem('studentCredits') || '60'),
-            year: parseInt(localStorage.getItem('studentYear') || '2'),
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const DEPT_COLORS = {
+            CS: { bg: 'rgba(16,185,129,', label: 'emerald-400', icon: 'code' },
+            MATH: { bg: 'rgba(201,167,74,', label: 'primary', icon: 'calculate' },
+            STAT: { bg: 'rgba(99,102,241,', label: 'indigo-400', icon: 'bar_chart' },
+            IS: { bg: 'rgba(244,63,94,', label: 'rose-400', icon: 'security' },
+            SE: { bg: 'rgba(251,146,60,', label: 'orange-400', icon: 'engineering' }
         };
-    }
+        const DEPT_DOT_COLORS = { CS: 'bg-emerald-500', MATH: 'bg-primary', STAT: 'bg-indigo-500', IS: 'bg-rose-500', SE: 'bg-orange-500' };
+        const DEPT_SHADOW = { CS: 'shadow-emerald-500/30', MATH: 'shadow-primary/30', STAT: 'shadow-indigo-500/30', IS: 'shadow-rose-500/30', SE: 'shadow-orange-500/30' };
 
-    async function fetchAnalytics() {
-        try {
-            const resp = await fetch(`${API_BASE}/api/analytics`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(buildProfilePayload())
-            });
-            if (!resp.ok) throw new Error(`API ${resp.status}`);
-            const data = await resp.json();
-            renderDeptCharts(data.departments, data.overall);
-            renderScatter(data.departments);
-            renderFeatureImportances(data.feature_importances);
-        } catch (err) {
-            document.getElementById('dept-charts').innerHTML = `
+        function buildProfilePayload() {
+            return {
+                name: `${localStorage.getItem('studentFirstName') || 'Alex'} ${localStorage.getItem('studentLastName') || 'Chen'}`,
+                cgpa: parseFloat(localStorage.getItem('studentCgpa') || '7.5'),
+                hardworking_level: parseInt(localStorage.getItem('studentHardworking') || '7'),
+                cs_proficiency: parseFloat(localStorage.getItem('studentCsProf') || '7.0'),
+                math_proficiency: parseFloat(localStorage.getItem('studentMathProf') || '6.0'),
+                stat_proficiency: parseFloat(localStorage.getItem('studentStatProf') || '6.5'),
+                is_proficiency: parseFloat(localStorage.getItem('studentIsProf') || '6.0'),
+                se_proficiency: parseFloat(localStorage.getItem('studentSeProf') || '6.5'),
+                credits_completed: parseInt(localStorage.getItem('studentCredits') || '60'),
+                year: parseInt(localStorage.getItem('studentYear') || '2'),
+            };
+        }
+
+        async function fetchAnalytics() {
+            try {
+                const resp = await fetch(`${API_BASE}/api/analytics`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(buildProfilePayload())
+                });
+                if (!resp.ok) throw new Error(`API ${resp.status}`);
+                const data = await resp.json();
+                renderDeptCharts(data.departments, data.overall);
+                renderScatter(data.departments);
+                renderFeatureImportances(data.feature_importances);
+            } catch (err) {
+                document.getElementById('dept-charts').innerHTML = `
                 <div class="col-span-full bg-surface-dark/30 rounded-xl border border-red-500/20 p-6 text-center">
                     <span class="material-symbols-outlined text-red-400 mr-2">error</span>
                     <span class="text-red-400 font-mono text-sm">API connection failed. Start the server: <code class="bg-slate-800 px-2 py-1 rounded">uvicorn api:app --reload</code></span>
                 </div>`;
-            console.error('Analytics API Error:', err);
+                console.error('Analytics API Error:', err);
+            }
         }
-    }
 
-    function renderDeptCharts(departments, overall) {
-        const container = document.getElementById('dept-charts');
-        const depts = Object.entries(departments);
+        function renderDeptCharts(departments, overall) {
+            const container = document.getElementById('dept-charts');
+            const depts = Object.entries(departments);
 
-        // Card 1: Department Success Rates (bar chart)
-        let barHtml = `
+            // Card 1: Department Success Rates (bar chart)
+            let barHtml = `
         <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-6 flex flex-col gap-4">
             <div class="flex justify-between items-start">
                 <h3 class="text-lg font-display font-semibold text-slate-100">Dept. Success Rates</h3>
                 <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">AVG ${overall.avg_success}%</span>
             </div>
             <div class="flex items-end gap-3 h-40 pt-4">`;
-        depts.forEach(([dept, v]) => {
-            const pct = v.avg_success;
-            const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
-            barHtml += `
+            depts.forEach(([dept, v]) => {
+                const pct = v.avg_success;
+                const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
+                barHtml += `
                 <div class="flex-1 relative group/bar rounded-t-sm transition-all hover:opacity-90 cursor-pointer" style="height:${Math.max(pct, 5)}%; background:${color}0.6);">
                     <div class="opacity-0 group-hover/bar:opacity-100 absolute -top-12 left-1/2 -translate-x-1/2 frosted-glass px-3 py-1.5 rounded text-[10px] font-mono whitespace-nowrap z-10">
                         ${dept}: ${pct}%
                     </div>
                 </div>`;
-        });
-        barHtml += `</div>
+            });
+            barHtml += `</div>
             <div class="flex justify-between text-[10px] font-mono text-primary/40 pt-2 border-t border-primary/5">
                 ${depts.map(([d]) => `<span>${d}</span>`).join('')}
             </div>
         </div>`;
 
-        // Card 2: Department Avg Grades (bar chart)
-        let gradeHtml = `
+            // Card 2: Department Avg Grades (bar chart)
+            let gradeHtml = `
         <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-6 flex flex-col gap-4">
             <div class="flex justify-between items-start">
                 <h3 class="text-lg font-display font-semibold text-slate-100">Avg Expected Grade</h3>
                 <span class="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded">${overall.avg_grade}/10</span>
             </div>
             <div class="flex items-end gap-3 h-40 pt-4">`;
-        depts.forEach(([dept, v]) => {
-            const pct = v.avg_grade * 10;
-            const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
-            gradeHtml += `
+            depts.forEach(([dept, v]) => {
+                const pct = v.avg_grade * 10;
+                const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
+                gradeHtml += `
                 <div class="flex-1 relative group/bar rounded-t-sm transition-all hover:opacity-90 cursor-pointer" style="height:${Math.max(pct, 5)}%; background:${color}0.5);">
                     <div class="opacity-0 group-hover/bar:opacity-100 absolute -top-12 left-1/2 -translate-x-1/2 frosted-glass px-3 py-1.5 rounded text-[10px] font-mono whitespace-nowrap z-10">
                         ${dept}: ${v.avg_grade}/10
                     </div>
                 </div>`;
-        });
-        gradeHtml += `</div>
+            });
+            gradeHtml += `</div>
             <div class="flex justify-between text-[10px] font-mono text-primary/40 pt-2 border-t border-primary/5">
                 ${depts.map(([d]) => `<span>${d}</span>`).join('')}
             </div>
         </div>`;
 
-        // Card 3: Model Confidence (bar chart)
-        let confHtml = `
+            // Card 3: Model Confidence (bar chart)
+            let confHtml = `
         <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-6 flex flex-col gap-4">
             <div class="flex justify-between items-start">
                 <h3 class="text-lg font-display font-semibold text-slate-100">Ensemble Confidence</h3>
                 <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">VOTING CONSENSUS</span>
             </div>
             <div class="flex items-end gap-3 h-40 pt-4">`;
-        depts.forEach(([dept, v]) => {
-            const pct = v.avg_confidence;
-            const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
-            confHtml += `
+            depts.forEach(([dept, v]) => {
+                const pct = v.avg_confidence;
+                const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
+                confHtml += `
                 <div class="flex-1 relative group/bar rounded-t-sm transition-all hover:opacity-90 cursor-pointer" style="height:${Math.max(pct, 5)}%; background:${color}0.7);">
                     <div class="opacity-0 group-hover/bar:opacity-100 absolute -top-12 left-1/2 -translate-x-1/2 frosted-glass px-3 py-1.5 rounded text-[10px] font-mono whitespace-nowrap z-10">
                         ${dept}: ${pct}%
                     </div>
                 </div>`;
-        });
-        confHtml += `</div>
+            });
+            confHtml += `</div>
             <div class="flex justify-between text-[10px] font-mono text-primary/40 pt-2 border-t border-primary/5">
                 ${depts.map(([d]) => `<span>${d}</span>`).join('')}
             </div>
         </div>`;
 
-        // Card 4: Course Count + Overall Summary
-        let summaryHtml = `
-        <div class="bg-surface-dark/30 rounded-xl border border-primary/10 p-6 flex flex-col gap-4">
-            <div class="flex justify-between items-start">
-                <h3 class="text-lg font-display font-semibold text-slate-100">Course Distribution</h3>
-                <span class="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded">${overall.total_courses} TOTAL</span>
-            </div>
-            <div class="space-y-3 mt-2">`;
-        depts.forEach(([dept, v]) => {
-            const widthPct = (v.course_count / overall.total_courses * 100).toFixed(0);
-            const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
-            summaryHtml += `
-                <div>
-                    <div class="flex justify-between text-xs font-mono mb-1">
-                        <span class="text-slate-300">${dept}</span>
-                        <span class="text-primary/60">${v.course_count} courses</span>
-                    </div>
-                    <div class="w-full h-2 bg-primary/5 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full transition-all" style="width:${widthPct}%; background:${color}0.6);"></div>
-                    </div>
-                </div>`;
-        });
-        summaryHtml += `</div></div>`;
+            container.innerHTML = barHtml + gradeHtml + confHtml;
+        }
 
-        container.innerHTML = barHtml + gradeHtml + confHtml + summaryHtml;
-    }
+        function renderScatter(departments) {
+            const plot = document.getElementById('scatter-plot');
+            // Remove old dots
+            plot.querySelectorAll('.scatter-dot').forEach(el => el.remove());
 
-    function renderScatter(departments) {
-        const plot = document.getElementById('scatter-plot');
-        // Remove old dots
-        plot.querySelectorAll('.scatter-dot').forEach(el => el.remove());
+            Object.entries(departments).forEach(([dept, v]) => {
+                // Y axis = success (higher = higher on chart, so lower top%)
+                const yPct = 100 - v.avg_success;
+                // X axis = avg_grade scaled to % of 10
+                const xPct = (v.avg_grade / 10) * 100;
+                const size = Math.max(12, Math.min(24, v.course_count * 3));
+                const dotColor = DEPT_DOT_COLORS[dept] || 'bg-primary';
+                const shadow = DEPT_SHADOW[dept] || 'shadow-primary/30';
 
-        Object.entries(departments).forEach(([dept, v]) => {
-            // Y axis = success (higher = higher on chart, so lower top%)
-            const yPct = 100 - v.avg_success;
-            // X axis = avg_grade scaled to % of 10
-            const xPct = (v.avg_grade / 10) * 100;
-            const size = Math.max(12, Math.min(24, v.course_count * 3));
-            const dotColor = DEPT_DOT_COLORS[dept] || 'bg-primary';
-            const shadow = DEPT_SHADOW[dept] || 'shadow-primary/30';
-
-            const dot = document.createElement('div');
-            dot.className = `scatter-dot absolute group/point`;
-            dot.style.top = `${Math.max(5, Math.min(85, yPct))}%`;
-            dot.style.left = `${Math.max(5, Math.min(90, xPct))}%`;
-            dot.innerHTML = `
+                const dot = document.createElement('div');
+                dot.className = `scatter-dot absolute group/point`;
+                dot.style.top = `${Math.max(5, Math.min(85, yPct))}%`;
+                dot.style.left = `${Math.max(5, Math.min(90, xPct))}%`;
+                dot.innerHTML = `
                 <div class="rounded-full border-2 border-background-dark shadow-lg ${dotColor} ${shadow} cursor-pointer hover:scale-125 transition-transform" style="width:${size}px;height:${size}px;"></div>
                 <div class="opacity-0 group-hover/point:opacity-100 pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 frosted-glass px-4 py-2.5 rounded-lg text-[11px] font-mono z-20 shadow-xl transition-all min-w-[140px]">
                     <p class="font-bold text-primary">${dept}</p>
@@ -354,25 +369,25 @@
                     <p class="text-slate-100">Grade: ${v.avg_grade}/10</p>
                     <p class="text-slate-400">${v.course_count} courses</p>
                 </div>`;
-            plot.appendChild(dot);
-        });
-    }
+                plot.appendChild(dot);
+            });
+        }
 
-    function renderFeatureImportances(importances) {
-        const container = document.getElementById('feature-bars');
-        let html = '';
-        Object.entries(importances).forEach(([dept, features]) => {
-            const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
-            html += `
+        function renderFeatureImportances(importances) {
+            const container = document.getElementById('feature-bars');
+            let html = '';
+            Object.entries(importances).forEach(([dept, features]) => {
+                const color = DEPT_COLORS[dept]?.bg || 'rgba(201,167,74,';
+                html += `
             <div class="bg-surface-dark/50 rounded-lg border border-primary/10 p-4">
                 <h4 class="text-sm font-display font-bold text-slate-100 mb-3 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary !text-base">${DEPT_COLORS[dept]?.icon || 'school'}</span> ${dept} Unit
                 </h4>
                 <div class="space-y-2">`;
-            features.forEach(f => {
-                const widthPct = (f.importance * 100).toFixed(0);
-                const name = f.feature.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                html += `
+                features.forEach(f => {
+                    const widthPct = (f.importance * 100).toFixed(0);
+                    const name = f.feature.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                    html += `
                     <div>
                         <div class="flex justify-between text-[10px] font-mono mb-0.5">
                             <span class="text-slate-400">${name}</span>
@@ -382,25 +397,26 @@
                             <div class="h-full rounded-full" style="width:${widthPct}%; background:${color}0.7);"></div>
                         </div>
                     </div>`;
+                });
+                html += `</div></div>`;
             });
-            html += `</div></div>`;
-        });
-        container.innerHTML = html;
-    }
-
-    // ── Avatar sync ──
-    document.addEventListener('DOMContentLoaded', () => {
-        const storedFirst = localStorage.getItem('studentFirstName');
-        const storedLast = localStorage.getItem('studentLastName');
-        if (storedFirst && storedLast) {
-            const fullNameEncoded = encodeURIComponent(`${storedFirst} ${storedLast}`);
-            const avatarDiv = document.getElementById('header-avatar');
-            if (avatarDiv) {
-                avatarDiv.style.backgroundImage = `url("https://ui-avatars.com/api/?name=${fullNameEncoded}&background=c9a74a&color=12110e&bold=true")`;
-            }
+            container.innerHTML = html;
         }
-        fetchAnalytics();
-    });
-</script>
+
+        // ── Avatar sync ──
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedFirst = localStorage.getItem('studentFirstName');
+            const storedLast = localStorage.getItem('studentLastName');
+            if (storedFirst && storedLast) {
+                const fullNameEncoded = encodeURIComponent(`${storedFirst} ${storedLast}`);
+                const avatarDiv = document.getElementById('header-avatar');
+                if (avatarDiv) {
+                    avatarDiv.style.backgroundImage = `url("https://ui-avatars.com/api/?name=${fullNameEncoded}&background=c9a74a&color=12110e&bold=true")`;
+                }
+            }
+            fetchAnalytics();
+        });
+    </script>
 </body>
+
 </html>

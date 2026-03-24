@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Available Courses - CourseIQ</title>
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function (...args) {
+            if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn.apply(console, args);
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c9a74a",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#0A0E1A",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "mono": ["Space Mono", "monospace"],
+                        "body": ["DM Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .header-font {
+            font-family: 'Space Mono', monospace;
+        }
+
+        .grid-bg {
+            background-image: radial-gradient(circle at 1px 1px, rgba(201, 167, 74, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #c9a74a 0%, #fff0c7 50%, #8e732d 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Loader animation */
+        .loader {
+            border: 4px solid rgba(201, 167, 74, 0.1);
+            border-top: 4px solid #c9a74a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 grid-bg selection:bg-primary selection:text-background-dark">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+
+        <!-- Navigation -->
+        <header class="sticky top-0 z-50 w-full border-b border-primary/10 bg-background-dark/80 backdrop-blur-md">
+            <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+                <a href="landing.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-background-dark">
+                        <span class="material-symbols-outlined font-bold">query_stats</span>
+                    </div>
+                    <h2 class="header-font text-xl font-bold tracking-tighter text-primary">CourseIQ</h2>
+                </a>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="index.html">Dashboard</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="profile.html">Profile</a>
+                    <a class="text-sm font-bold text-primary transition-colors" href="courses.html">Courses</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors"
+                        href="analytics.html">Analytics</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <a href="profile.html" id="get-started-btn"
+                        class="inline-flex rounded-full bg-primary px-6 py-2 text-sm font-bold text-background-dark hover:brightness-110 transition-all text-center">
+                        My Profile
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 py-16 px-6 relative z-10 w-full">
+            <div class="mx-auto max-w-7xl">
+                <div class="mb-12">
+                    <div
+                        class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 mb-6">
+                        <span class="material-symbols-outlined text-sm text-primary">school</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-primary header-font">Course
+                            Directory</span>
+                    </div>
+                    <h1 class="header-font text-4xl md:text-5xl font-bold text-white mb-4">
+                        Explore <span class="gold-gradient-text">Programs</span>
+                    </h1>
+                    <p class="text-slate-400 max-w-2xl text-lg">
+                        Browse all available courses across our 5 specialized departments. Identify prerequisites and
+                        discover path difficulty.
+                    </p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading" class="flex flex-col items-center justify-center py-20">
+                    <div class="loader mb-4"></div>
+                    <p class="text-slate-400 header-font text-sm">Fetching course directory...</p>
+                </div>
+
+                <!-- Courses Container -->
+                <div id="departments-container" class="space-y-16 hidden">
+                    <!-- Dynamic Content Inserted Here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-background-dark py-12 px-6 border-t border-primary/5 mt-auto z-10">
+            <div class="mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-8 w-8 items-center justify-center rounded bg-primary text-background-dark">
+                        <span class="material-symbols-outlined text-sm font-bold">query_stats</span>
+                    </div>
+                    <h2 class="header-font text-lg font-bold tracking-tighter text-white">CourseIQ</h2>
+                </div>
+                <div class="flex gap-8 text-sm text-slate-500">
+                    <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                    <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+                    <a class="hover:text-primary transition-colors" href="#">Contact</a>
+                </div>
+                <p class="text-sm text-slate-600">© 2024 CourseIQ Analytics. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script to fetch and render courses -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loadingEl = document.getElementById('loading');
+            const containerEl = document.getElementById('departments-container');
+
+            // Department config for UI styling
+            const deptConfig = {
+                "CS": { name: "Computer Science", icon: "terminal", color: "from-blue-500/20 to-blue-900/10" },
+                "Math": { name: "Mathematics", icon: "calculate", color: "from-purple-500/20 to-purple-900/10" },
+                "Statistics": { name: "Statistics", icon: "monitoring", color: "from-emerald-500/20 to-emerald-900/10" },
+                "IS": { name: "Information Systems", icon: "dns", color: "from-orange-500/20 to-orange-900/10" },
+                "SE": { name: "Software Engineering", icon: "architecture", color: "from-rose-500/20 to-rose-900/10" }
+            };
+
+            const API_BASE = 'http://localhost:8000';
+            try {
+                const response = await fetch(`${API_BASE}/api/courses`);
+                if (!response.ok) throw new Error('Failed to fetch courses');
+                const data = await response.json();
+
+                // Group courses by department
+                const grouped = {};
+                data.courses.forEach(c => {
+                    const dept = c.department;
+                    if (!grouped[dept]) grouped[dept] = [];
+                    grouped[dept].push(c);
+                });
+
+                // Generate HTML
+                let html = '';
+
+                // Sort departments to a standard order if possible, or just iterate
+                const deptOrder = ["CS", "SE", "IS", "Math", "Statistics"];
+                const sortedDepts = Object.keys(grouped).sort((a, b) => {
+                    return deptOrder.indexOf(a) - deptOrder.indexOf(b);
+                });
+
+                for (const dept of sortedDepts) {
+                    const courses = grouped[dept];
+                    const conf = deptConfig[dept] || { name: dept, icon: "school", color: "from-primary/20 to-primary/5" };
+
+                    html += `
+                        <div class="department-section">
+                            <div class="flex items-center gap-3 mb-6 border-b border-primary/10 pb-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${conf.color} border border-primary/20 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-2xl">${conf.icon}</span>
+                                </div>
+                                <div>
+                                    <h2 class="header-font text-2xl font-bold text-white">${conf.name}</h2>
+                                    <p class="text-sm text-slate-400 font-mono">${courses.length} courses available</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    `;
+
+                    courses.forEach(course => {
+                        let prereqHtml = '';
+                        if (course.prerequisite_code) {
+                            const isOverridden = JSON.parse(localStorage.getItem('overriddenPrereqs') || '[]').includes(course.course_code);
+                            const toggleChecked = isOverridden ? 'checked' : '';
+                            const statusColor = isOverridden ? 'text-primary' : 'text-amber-500';
+                            
+                            prereqHtml = `
+                                <div class="mt-4 pt-4 border-t border-primary/10 shrink-0">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-1.5 ${statusColor} prereq-icon-container transition-colors duration-300">
+                                            <span class="material-symbols-outlined text-sm font-bold">warning</span>
+                                            <span class="text-xs font-bold font-mono">Prerequisite: ${course.prerequisite_code}</span>
+                                        </div>
+                                    </div>
+                                    <label class="flex items-center justify-between cursor-pointer group/toggle">
+                                        <span class="text-xs text-slate-400 font-mono group-hover/toggle:text-slate-300 transition-colors">Override Prerequisite</span>
+                                        <div class="relative inline-flex items-center">
+                                            <input type="checkbox" class="sr-only peer prereq-override-toggle" data-course-code="\${course.course_code}" \${toggleChecked}>
+                                            <div class="w-9 h-5 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary border border-primary/20"></div>
+                                        </div>
+                                    </label>
+                                </div>
+                            `;
+                        }
+
+                        html += `
+                            <div class="group bg-background-dark border border-primary/10 hover:border-primary/40 rounded-xl p-6 transition-all relative overflow-hidden flex flex-col h-full">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-10 group-hover:bg-primary/10 transition-colors"></div>
+                                
+                                <div class="flex justify-between items-start mb-4">
+                                    <span class="header-font font-bold text-primary bg-primary/10 px-2 py-1 rounded text-xs">
+                                        \${course.course_code}
+                                    </span>
+                                    <div class="flex items-center gap-1 text-slate-500 text-xs font-mono">
+                                        <span class="material-symbols-outlined text-[14px]">local_activity</span>
+                                        \${course.credits} CR
+                                    </div>
+                                </div>
+                                
+                                <h3 class="text-lg font-bold text-white mb-2 leading-tight">\${course.course_name}</h3>
+                                \${prereqHtml}
+                                
+                                <div class="mt-auto pt-4 flex items-center justify-between border-t border-primary/10 overflow-hidden">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-slate-400 uppercase tracking-wider font-bold">Difficulty</span>
+                                        <div class="flex items-center">
+                                            <div class="h-2 w-16 bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary" style="width: \${(course.difficulty / 10) * 100}%"></div>
+                                            </div>
+                                            <span class="ml-2 text-xs text-slate-300 font-mono">\${course.difficulty}/10</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+
+                containerEl.innerHTML = html;
+                loadingEl.classList.add('hidden');
+                containerEl.classList.remove('hidden');
+
+                // Prerequisite bypass toggle handlers
+                document.querySelectorAll('.prereq-override-toggle').forEach(toggle => {
+                    toggle.addEventListener('change', (e) => {
+                        const courseCode = e.target.getAttribute('data-course-code');
+                        let overridden = JSON.parse(localStorage.getItem('overriddenPrereqs') || '[]');
+                        
+                        const iconContainer = e.target.closest('.mt-4').querySelector('.prereq-icon-container');
+                        
+                        if (e.target.checked) {
+                            if (!overridden.includes(courseCode)) overridden.push(courseCode);
+                            if (iconContainer) {
+                                iconContainer.classList.remove('text-amber-500');
+                                iconContainer.classList.add('text-primary');
+                            }
+                        } else {
+                            overridden = overridden.filter(code => code !== courseCode);
+                            if (iconContainer) {
+                                iconContainer.classList.remove('text-primary');
+                                iconContainer.classList.add('text-amber-500');
+                            }
+                        }
+                        localStorage.setItem('overriddenPrereqs', JSON.stringify(overridden));
+                    });
+                });
+
+            } catch (error) {
+                console.error(error);
+                loadingEl.innerHTML = `<div class="text-red-400 header-font flex items-center gap-2"><span class="material-symbols-outlined">error</span> Error loading courses. Please ensure the backend is running.</div>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -7,7 +7,7 @@
     <title>CourseIQ - Predict Your Academic Success</title>
     <script>
         const originalWarn = console.warn;
-        console.warn = function(...args) {
+        console.warn = function (...args) {
             if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
             originalWarn.apply(console, args);
         };
@@ -76,17 +76,17 @@
                 <nav class="hidden md:flex items-center gap-8">
                     <a class="text-sm font-medium hover:text-primary transition-colors" href="index.html">Dashboard</a>
                     <a class="text-sm font-medium hover:text-primary transition-colors" href="profile.html">Profile</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">Courses</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="courses.html">Courses</a>
                     <a class="text-sm font-medium hover:text-primary transition-colors"
                         href="analytics.html">Analytics</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
                 </nav>
                 <div class="flex items-center gap-4">
                     <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=k96HI5LKSkWwaDkGNL1pYZjTMjXMmtpLtBv25QzA_u5UM1FTWDcyNENWOU9LOFhIQjk5WkJCTlA3QS4u"
                         target="_blank"
                         class="hidden sm:block text-xs font-bold uppercase tracking-widest text-primary border border-primary/30 px-4 py-2 rounded-full hover:bg-primary/10 transition-all">Submit
                         Review</a>
-                    <button id="login-btn" class="hidden sm:block text-sm font-medium hover:text-primary transition-colors">Log
+                    <button id="login-btn"
+                        class="hidden sm:block text-sm font-medium hover:text-primary transition-colors">Log
                         In</button>
                     <a href="profile.html" id="get-started-btn"
                         class="inline-flex rounded-full bg-primary px-6 py-2 text-sm font-bold text-background-dark hover:brightness-110 transition-all text-center">
@@ -130,114 +130,91 @@
                                     class="absolute inset-0 -translate-x-full bg-white/20 transition-transform group-hover:translate-x-0">
                                 </div>
                             </a>
-                            <button
-                                class="flex h-14 items-center justify-center rounded-full border border-primary/30 px-10 font-bold text-primary hover:bg-primary/5 transition-all active:scale-95">
-                                See How It Works
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Trust Badges -->
-                    <div class="mt-24 border-y border-primary/10 py-10">
-                        <p
-                            class="text-center text-xs font-bold uppercase tracking-[0.3em] text-slate-500 mb-8 header-font">
-                            Trusted by students from Ivy League &amp; Global Institutions</p>
-                        <div class="flex flex-wrap justify-center gap-12 opacity-40 grayscale contrast-125">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-3xl">school</span>
-                                <span class="header-font font-bold">STANFORD</span>
+                    <!-- Feature Grid -->
+                    <section class="bg-primary/5 py-24">
+                        <div class="mx-auto max-w-7xl px-6">
+                            <div class="mb-16">
+                                <h2 class="header-font text-3xl font-bold text-white mb-4">The CourseIQ Advantage</h2>
+                                <div class="h-1 w-20 bg-primary"></div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-3xl">account_balance</span>
-                                <span class="header-font font-bold">HARVARD</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-3xl">auto_stories</span>
-                                <span class="header-font font-bold">OXFORD</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-3xl">architecture</span>
-                                <span class="header-font font-bold">MIT</span>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div
+                                    class="group relative rounded-xl border border-primary/10 bg-background-dark p-8 transition-all hover:border-primary/40">
+                                    <div
+                                        class="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                        <span class="material-symbols-outlined">trending_up</span>
+                                    </div>
+                                    <h3 class="header-font text-xl font-bold text-white mb-3">Ensemble Architecture</h3>
+                                    <p class="text-slate-400 text-sm leading-relaxed">Powered by a robust voting
+                                        ensemble of 20
+                                        ML models, integrating Gradient Boosting, Random Forest, and SVR for unmatched
+                                        accuracy.
+                                    </p>
+                                </div>
+                                <div
+                                    class="group relative rounded-xl border border-primary/10 bg-background-dark p-8 transition-all hover:border-primary/40">
+                                    <div
+                                        class="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                        <span class="material-symbols-outlined">grid_view</span>
+                                    </div>
+                                    <h3 class="header-font text-xl font-bold text-white mb-3">Confidence Scoring</h3>
+                                    <p class="text-slate-400 text-sm leading-relaxed">Receive not just grade
+                                        predictions, but an
+                                        integrated Confidence Score driven by multi-model consensus before you enroll.
+                                    </p>
+                                </div>
+                                <div
+                                    class="group relative rounded-xl border border-primary/10 bg-background-dark p-8 transition-all hover:border-primary/40">
+                                    <div
+                                        class="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                        <span class="material-symbols-outlined">work</span>
+                                    </div>
+                                    <h3 class="header-font text-xl font-bold text-white mb-3">Prerequisite Guardrails
+                                    </h3>
+                                    <p class="text-slate-400 text-sm leading-relaxed">Intelligently maps your current
+                                        transcript
+                                        to enforce course chains, preventing you from choosing classes you aren't ready
+                                        for.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+                    </section>
 
-            <!-- Feature Grid -->
-            <section class="bg-primary/5 py-24">
-                <div class="mx-auto max-w-7xl px-6">
-                    <div class="mb-16">
-                        <h2 class="header-font text-3xl font-bold text-white mb-4">The CourseIQ Advantage</h2>
-                        <div class="h-1 w-20 bg-primary"></div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div
-                            class="group relative rounded-xl border border-primary/10 bg-background-dark p-8 transition-all hover:border-primary/40">
-                            <div
-                                class="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                <span class="material-symbols-outlined">trending_up</span>
+                    <!-- Stats Strip -->
+                    <section class="relative overflow-hidden bg-background-dark border-t border-primary/20">
+                        <div class="mx-auto max-w-7xl px-6 py-20">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                                <div class="flex flex-col items-center text-center">
+                                    <span class="header-font text-4xl font-bold text-primary mb-1">20</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Ensemble
+                                        Models</span>
+                                </div>
+                                <div class="flex flex-col items-center text-center">
+                                    <span class="header-font text-4xl font-bold text-primary mb-1">5</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Specialized
+                                        Departments</span>
+                                </div>
+                                <div class="flex flex-col items-center text-center">
+                                    <span class="header-font text-4xl font-bold text-primary mb-1">4</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-slate-500">ML
+                                        Algorithms</span>
+                                </div>
+                                <div class="flex flex-col items-center text-center">
+                                    <span class="header-font text-4xl font-bold text-primary mb-1">96%</span>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Voting
+                                        Consensus
+                                        High</span>
+                                </div>
                             </div>
-                            <h3 class="header-font text-xl font-bold text-white mb-3">Ensemble Architecture</h3>
-                            <p class="text-slate-400 text-sm leading-relaxed">Powered by a robust voting ensemble of 20
-                                ML models, integrating Gradient Boosting, Random Forest, and SVR for unmatched accuracy.
-                            </p>
                         </div>
+                        <!-- Background Decoration -->
                         <div
-                            class="group relative rounded-xl border border-primary/10 bg-background-dark p-8 transition-all hover:border-primary/40">
-                            <div
-                                class="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                <span class="material-symbols-outlined">grid_view</span>
-                            </div>
-                            <h3 class="header-font text-xl font-bold text-white mb-3">Confidence Scoring</h3>
-                            <p class="text-slate-400 text-sm leading-relaxed">Receive not just grade predictions, but an
-                                integrated Confidence Score driven by multi-model consensus before you enroll.</p>
+                            class="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent">
                         </div>
-                        <div
-                            class="group relative rounded-xl border border-primary/10 bg-background-dark p-8 transition-all hover:border-primary/40">
-                            <div
-                                class="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                <span class="material-symbols-outlined">work</span>
-                            </div>
-                            <h3 class="header-font text-xl font-bold text-white mb-3">Prerequisite Guardrails</h3>
-                            <p class="text-slate-400 text-sm leading-relaxed">Intelligently maps your current transcript
-                                to enforce course chains, preventing you from choosing classes you aren't ready for.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Stats Strip -->
-            <section class="relative overflow-hidden bg-background-dark border-t border-primary/20">
-                <div class="mx-auto max-w-7xl px-6 py-20">
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div class="flex flex-col items-center text-center">
-                            <span class="header-font text-4xl font-bold text-primary mb-1">20</span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Ensemble
-                                Models</span>
-                        </div>
-                        <div class="flex flex-col items-center text-center">
-                            <span class="header-font text-4xl font-bold text-primary mb-1">5</span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Specialized
-                                Departments</span>
-                        </div>
-                        <div class="flex flex-col items-center text-center">
-                            <span class="header-font text-4xl font-bold text-primary mb-1">4</span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-slate-500">ML
-                                Algorithms</span>
-                        </div>
-                        <div class="flex flex-col items-center text-center">
-                            <span class="header-font text-4xl font-bold text-primary mb-1">96%</span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Voting Consensus
-                                High</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Background Decoration -->
-                <div
-                    class="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent">
-                </div>
-            </section>
+                    </section>
         </main>
 
         <!-- Footer -->
@@ -254,26 +231,26 @@
                     <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
                     <a class="hover:text-primary transition-colors" href="#">Contact</a>
                 </div>
-                <p class="text-sm text-slate-600">© 2024 CourseIQ Analytics. All rights reserved.</p>
+                <p class="text-sm text-slate-600">© 2026 CourseIQ Analytics.</p>
             </div>
         </footer>
     </div>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const storedFirst = localStorage.getItem('studentFirstName');
-        const storedLast = localStorage.getItem('studentLastName');
-        if (storedFirst && storedLast) {
-            const loginBtn = document.getElementById('login-btn');
-            const getStartedBtn = document.getElementById('get-started-btn');
-            
-            if (loginBtn && getStartedBtn) {
-                loginBtn.style.display = 'none';
-                getStartedBtn.innerText = `Dashboard (${storedFirst})`;
-                getStartedBtn.href = 'index.html';
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedFirst = localStorage.getItem('studentFirstName');
+            const storedLast = localStorage.getItem('studentLastName');
+            if (storedFirst && storedLast) {
+                const loginBtn = document.getElementById('login-btn');
+                const getStartedBtn = document.getElementById('get-started-btn');
+
+                if (loginBtn && getStartedBtn) {
+                    loginBtn.style.display = 'none';
+                    getStartedBtn.innerText = `Dashboard (${storedFirst})`;
+                    getStartedBtn.href = 'index.html';
+                }
             }
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 
 </html>

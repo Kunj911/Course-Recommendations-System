@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>CourseIQ - Dashboard</title>
     <script>
         // Suppress Tailwind CDN warning
         const originalWarn = console.warn;
-        console.warn = function(...args) {
+        console.warn = function (...args) {
             if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
             originalWarn.apply(console, args);
         };
     </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -36,7 +40,7 @@
                         "mono": ["Space Mono", "monospace"],
                         "body": ["DM Sans", "sans-serif"]
                     },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
                 },
             },
         }
@@ -45,281 +49,294 @@
         body {
             font-family: 'DM Sans', sans-serif;
         }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
-        .font-mono { font-family: 'Space Mono', monospace; }
+
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .font-mono {
+            font-family: 'Space Mono', monospace;
+        }
     </style>
 </head>
+
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
-<div class="relative flex flex-col w-full min-h-screen">
-    <header class="flex items-center justify-between border-b border-primary/10 bg-card-dark px-8 py-3 sticky top-0 z-50">
-        <div class="flex items-center gap-8">
-            <a href="landing.html" class="flex items-center gap-3 text-primary hover:opacity-80 transition-opacity">
-                <span class="material-symbols-outlined text-3xl">database</span>
-                <h2 class="text-xl font-display font-bold tracking-tight">CourseIQ</h2>
-            </a>
-            <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a class="text-primary border-b-2 border-primary pb-1" href="index.html">Dashboard</a>
-                <a class="text-slate-400 hover:text-primary transition-colors" href="profile.html">Profile</a>
-                <a class="text-slate-400 hover:text-primary transition-colors" href="#">Course Explorer</a>
-                <a class="text-slate-400 hover:text-primary transition-colors" href="#">Degree Map</a>
-                <a class="text-slate-400 hover:text-primary transition-colors" href="analytics.html">Analytics</a>
-            </div>
-        </div>
-        <div class="flex items-center gap-6">
-            <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=k96HI5LKSkWwaDkGNL1pYZjTMjXMmtpLtBv25QzA_u5UM1FTWDcyNENWOU9LOFhIQjk5WkJCTlA3QS4u" target="_blank" class="hidden lg:block text-[10px] font-mono font-bold uppercase tracking-widest text-primary border border-primary/20 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-all">Submit Review</a>
-            <div class="relative group">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
-                <input class="bg-background-dark border border-primary/20 rounded-lg pl-10 pr-4 py-1.5 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none w-64 transition-all" placeholder="Search courses..." type="text"/>
-            </div>
-            <button class="p-2 text-slate-400 hover:text-primary transition-colors relative">
-                <span class="material-symbols-outlined">notifications</span>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
-            </button>
-            <div class="h-8 w-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center overflow-hidden">
-                <img alt="User Avatar" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=12110e&bold=true"/>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-1 max-w-7xl mx-auto w-full px-8 py-8 space-y-8">
-        <section class="bg-card-dark rounded-xl border border-primary/10 p-6 flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                <div class="h-20 w-20 rounded-xl overflow-hidden border-2 border-primary/30">
-                    <img alt="Profile" class="w-full h-full object-cover" src="https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=12110e&bold=true&size=128"/>
-                </div>
-                <div>
-                    <h1 id="profile-name-display" class="text-2xl font-display font-bold text-slate-100 uppercase tracking-wider">Alex Chen</h1>
-                    <div class="flex items-center gap-4 mt-1 text-slate-400 font-mono text-sm">
-                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">school</span> <span id="academic-standing-display">Computer Science Senior</span></span>
-                        <span class="text-primary/40">|</span>
-                        <span class="flex items-center gap-1 font-bold text-primary">ID: <span id="student-id-display">#882910</span></span>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-3">
-                <button class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-all">
-                    <span class="material-symbols-outlined text-sm">download</span> Export Transcript
-                </button>
-                <a href="profile.html" class="bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold transition-all text-center flex items-center justify-center">
-                    Edit Academic Path
+    <div class="relative flex flex-col w-full min-h-screen">
+        <header
+            class="flex items-center justify-between border-b border-primary/10 bg-card-dark px-8 py-3 sticky top-0 z-50">
+            <div class="flex items-center gap-8">
+                <a href="landing.html" class="flex items-center gap-3 text-primary hover:opacity-80 transition-opacity">
+                    <span class="material-symbols-outlined text-3xl">database</span>
+                    <h2 class="text-xl font-display font-bold tracking-tight">CourseIQ</h2>
                 </a>
+                <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+                    <a class="text-primary border-b-2 border-primary pb-1" href="index.html">Dashboard</a>
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="profile.html">Profile</a>
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="courses.html">Course
+                        Explorer</a>
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="analytics.html">Analytics</a>
+                </div>
             </div>
-        </section>
+            <div class="flex items-center gap-6">
+                <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=k96HI5LKSkWwaDkGNL1pYZjTMjXMmtpLtBv25QzA_u5UM1FTWDcyNENWOU9LOFhIQjk5WkJCTlA3QS4u"
+                    target="_blank"
+                    class="hidden lg:block text-[10px] font-mono font-bold uppercase tracking-widest text-primary border border-primary/20 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-all">Submit
+                    Review</a>
+                <div
+                    class="h-8 w-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center overflow-hidden">
+                    <img alt="User Avatar" class="w-full h-full object-cover"
+                        src="https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=12110e&bold=true" />
+                </div>
+            </div>
+        </header>
 
-        <section id="stat-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-card-dark p-6 rounded-xl border border-primary/10 hover:border-primary/30 transition-all flex flex-col justify-between group">
-                <div>
-                    <div class="flex justify-between items-start">
-                        <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">Avg Success Rate</p>
-                        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">query_stats</span>
+        <main class="flex-1 max-w-7xl mx-auto w-full px-8 py-8 space-y-8">
+            <section class="bg-card-dark rounded-xl border border-primary/10 p-6 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <div class="h-20 w-20 rounded-xl overflow-hidden border-2 border-primary/30">
+                        <img alt="Profile" class="w-full h-full object-cover"
+                            src="https://ui-avatars.com/api/?name=Alex+Chen&background=c9a74a&color=12110e&bold=true&size=128" />
                     </div>
-                    <h3 class="text-4xl font-display font-bold mt-2" id="stat-success">—<span class="text-primary text-xl">%</span></h3>
-                </div>
-                <div class="mt-4 flex items-center gap-2 text-emerald-500 text-sm font-bold">
-                    <span class="material-symbols-outlined text-sm">trending_up</span>
-                    <span id="stat-success-label">Calculating…</span>
-                </div>
-            </div>
-            
-            <div class="bg-card-dark p-6 rounded-xl border border-primary/10 hover:border-primary/30 transition-all flex flex-col justify-between group">
-                <div>
-                    <div class="flex justify-between items-start">
-                        <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">Expected Grade</p>
-                        <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">grade</span>
-                    </div>
-                    <h3 class="text-4xl font-display font-bold mt-2" id="stat-grade">—</h3>
-                </div>
-                <div class="mt-4 flex items-center gap-2 text-emerald-500 text-sm font-bold">
-                    <span class="material-symbols-outlined text-sm">auto_awesome</span>
-                    <span id="stat-grade-label">Awaiting data…</span>
-                </div>
-            </div>
-            
-            <div class="bg-card-dark p-6 rounded-xl border border-primary/10 hover:border-primary/30 transition-all flex flex-col justify-between group">
-                <div>
-                    <div class="flex justify-between items-start">
-                        <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">Prereq Warnings</p>
-                        <span class="material-symbols-outlined text-amber-500 group-hover:animate-pulse">warning</span>
-                    </div>
-                    <h3 class="text-4xl font-display font-bold mt-2" id="stat-prereq">—<span class="text-amber-500 text-xl">!</span></h3>
-                </div>
-                <div class="mt-4 flex items-center gap-2 text-amber-500 text-sm font-bold">
-                    <span class="material-symbols-outlined text-sm">schedule</span>
-                    <span id="stat-prereq-label">Checking…</span>
-                </div>
-            </div>
-        </section>
-
-        <div class="flex flex-col lg:flex-row gap-8">
-            <div class="flex-1 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-display font-bold flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">recommend</span>
-                        Course Recommendations
-                    </h2>
-                    <div class="flex gap-2">
-                        <button onclick="fetchRecommendations()" class="bg-primary/10 hover:bg-primary/20 border border-primary/30 px-4 py-1.5 rounded-lg text-xs text-primary font-mono font-bold transition-all flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">refresh</span> REFRESH
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="overflow-x-auto rounded-xl border border-primary/10 bg-card-dark">
-                    <table class="w-full text-left border-collapse min-w-[800px]">
-                        <thead>
-                            <tr class="bg-primary/5 text-slate-400 text-[10px] uppercase font-mono tracking-widest border-b border-primary/10">
-                                <th class="px-4 py-4 font-medium w-12">#</th>
-                                <th class="px-4 py-4 font-medium">Code</th>
-                                <th class="px-4 py-4 font-medium">Course Name</th>
-                                <th class="px-4 py-4 font-medium">Dept</th>
-                                <th class="px-4 py-4 font-medium text-center">Diff</th>
-                                <th class="px-4 py-4 font-medium text-right">Success%</th>
-                                <th class="px-4 py-4 font-medium text-center">Grade</th>
-                                <th class="px-4 py-4 font-medium text-right">Voting Score</th>
-                                <th class="px-4 py-4 font-medium text-right">Voting Conf</th>
-                                <th class="px-4 py-4 font-medium text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rec-table-body" class="text-sm font-body">
-                            <tr><td colspan="10" class="px-4 py-12 text-center text-slate-500 font-mono">
-                                <span class="material-symbols-outlined text-primary animate-spin mr-2">progress_activity</span>
-                                Loading recommendations from ensemble…
-                            </td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Insights Column -->
-            <div class="w-full lg:w-[350px] space-y-6">
-                <div id="prereq-alerts-panel" class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5 relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 opacity-10">
-                        <span class="material-symbols-outlined text-8xl text-amber-500">warning</span>
-                    </div>
-                    <h3 class="text-amber-500 font-display font-bold text-lg flex items-center gap-2">
-                        <span class="material-symbols-outlined">report_problem</span>
-                        Prereq Alerts
-                    </h3>
-                    <p class="text-xs text-amber-200/70 mt-1 font-mono uppercase tracking-tight">Requires Immediate Action</p>
-                    <div id="prereq-alerts-list" class="mt-4 space-y-4 relative z-10">
-                        <p class="text-sm text-slate-400">Analyzing prerequisites…</p>
+                    <div>
+                        <h1 id="profile-name-display"
+                            class="text-2xl font-display font-bold text-slate-100 uppercase tracking-wider">Alex Chen
+                        </h1>
                     </div>
                 </div>
 
-                <div class="bg-card-dark border border-primary/10 rounded-xl p-5">
-                    <h3 class="text-slate-100 font-display font-bold text-lg flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">auto_graph</span>
-                        AI Insights
-                    </h3>
-                    <div id="ai-insights-list" class="mt-4 space-y-3">
-                        <div class="p-3 bg-primary/5 rounded-lg border border-primary/10">
-                            <p class="text-xs text-slate-300">Waiting for the ensemble models to generate insights…</p>
+            </section>
+
+            <section id="stat-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div
+                    class="bg-card-dark p-6 rounded-xl border border-primary/10 hover:border-primary/30 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">Avg Success Rate</p>
+                            <span
+                                class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">query_stats</span>
+                        </div>
+                        <h3 class="text-4xl font-display font-bold mt-2" id="stat-success">—<span
+                                class="text-primary text-xl">%</span></h3>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-emerald-500 text-sm font-bold">
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span id="stat-success-label">Calculating…</span>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-card-dark p-6 rounded-xl border border-primary/10 hover:border-primary/30 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">Expected Grade</p>
+                            <span
+                                class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">grade</span>
+                        </div>
+                        <h3 class="text-4xl font-display font-bold mt-2" id="stat-grade">—</h3>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-emerald-500 text-sm font-bold">
+                        <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                        <span id="stat-grade-label">Awaiting data…</span>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-card-dark p-6 rounded-xl border border-primary/10 hover:border-primary/30 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <p class="text-slate-400 text-xs font-mono uppercase tracking-widest">Prereq Warnings</p>
+                            <span
+                                class="material-symbols-outlined text-amber-500 group-hover:animate-pulse">warning</span>
+                        </div>
+                        <h3 class="text-4xl font-display font-bold mt-2" id="stat-prereq">—<span
+                                class="text-amber-500 text-xl">!</span></h3>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-amber-500 text-sm font-bold">
+                        <span class="material-symbols-outlined text-sm">schedule</span>
+                        <span id="stat-prereq-label">Checking…</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="flex-1 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-display font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">recommend</span>
+                            Course Recommendations
+                        </h2>
+                        <div class="flex gap-2">
+                            <button onclick="fetchRecommendations()"
+                                class="bg-primary/10 hover:bg-primary/20 border border-primary/30 px-4 py-1.5 rounded-lg text-xs text-primary font-mono font-bold transition-all flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">refresh</span> REFRESH
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-primary/10 bg-card-dark">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr
+                                    class="bg-primary/5 text-slate-400 text-[10px] uppercase font-mono tracking-widest border-b border-primary/10">
+                                    <th class="px-4 py-4 font-medium w-12">#</th>
+                                    <th class="px-4 py-4 font-medium">Code</th>
+                                    <th class="px-4 py-4 font-medium">Course Name</th>
+                                    <th class="px-4 py-4 font-medium">Dept</th>
+                                    <th class="px-4 py-4 font-medium text-center">Diff</th>
+                                    <th class="px-4 py-4 font-medium text-right">Success%</th>
+                                    <th class="px-4 py-4 font-medium text-center">Grade</th>
+                                    <th class="px-4 py-4 font-medium text-right">Voting Score</th>
+                                    <th class="px-4 py-4 font-medium text-right">Voting Conf</th>
+                                    <th class="px-4 py-4 font-medium text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rec-table-body" class="text-sm font-body">
+                                <tr>
+                                    <td colspan="10" class="px-4 py-12 text-center text-slate-500 font-mono">
+                                        <span
+                                            class="material-symbols-outlined text-primary animate-spin mr-2">progress_activity</span>
+                                        Loading recommendations from ensemble…
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Insights Column -->
+                <div class="w-full lg:w-[350px] space-y-6">
+                    <div id="prereq-alerts-panel"
+                        class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10">
+                            <span class="material-symbols-outlined text-8xl text-amber-500">warning</span>
+                        </div>
+                        <h3 class="text-amber-500 font-display font-bold text-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined">report_problem</span>
+                            Prereq Alerts
+                        </h3>
+                        <p class="text-xs text-amber-200/70 mt-1 font-mono uppercase tracking-tight">Requires Immediate
+                            Action</p>
+                        <div id="prereq-alerts-list" class="mt-4 space-y-4 relative z-10">
+                            <p class="text-sm text-slate-400">Analyzing prerequisites…</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-dark border border-primary/10 rounded-xl p-5">
+                        <h3 class="text-slate-100 font-display font-bold text-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">auto_graph</span>
+                            AI Insights
+                        </h3>
+                        <div id="ai-insights-list" class="mt-4 space-y-3">
+                            <div class="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                                <p class="text-xs text-slate-300">Waiting for the ensemble models to generate insights…
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <footer class="mt-auto border-t border-primary/10 bg-card-dark/50 px-8 py-4">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-center text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-            <p>&copy; 2024 CourseIQ Intelligence Systems</p>
-            <div class="flex gap-4">
-                <a class="hover:text-primary transition-colors" href="#">Privacy Engine</a>
-                <a class="hover:text-primary transition-colors" href="#">Data Integrity</a>
-                <a class="hover:text-primary transition-colors" href="#">API Status</a>
+        <footer class="mt-auto border-t border-primary/10 bg-card-dark/50 px-8 py-4">
+            <div
+                class="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-center text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                <p>&copy; 2024 CourseIQ Intelligence Systems</p>
+                <div class="flex gap-4">
+                    <a class="hover:text-primary transition-colors" href="#">Privacy Engine</a>
+                    <a class="hover:text-primary transition-colors" href="#">Data Integrity</a>
+                    <a class="hover:text-primary transition-colors" href="#">API Status</a>
+                </div>
             </div>
-        </div>
-    </footer>
-</div>
-<script>
-    const API_BASE = 'http://localhost:8000';
-    const DEPT_ACCENT = { CS: 'accent-cs', MATH: 'accent-math', STAT: 'accent-stat', IS: 'accent-is', SE: 'accent-se' };
+        </footer>
+    </div>
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const DEPT_ACCENT = { CS: 'accent-cs', MATH: 'accent-math', STAT: 'accent-stat', IS: 'accent-is', SE: 'accent-se' };
 
-    function gradeFromScore(g) {
-        if (g >= 9.0) return { letter: 'A', cls: 'text-emerald-400' };
-        if (g >= 8.0) return { letter: 'A-', cls: 'text-emerald-400' };
-        if (g >= 7.0) return { letter: 'B+', cls: 'text-slate-300' };
-        if (g >= 6.0) return { letter: 'B', cls: 'text-slate-400' };
-        if (g >= 5.0) return { letter: 'C+', cls: 'text-amber-400' };
-        return { letter: 'C', cls: 'text-red-400' };
-    }
-
-    function difficultyBars(level) {
-        const filled = Math.round(level / 2);
-        let html = '<div class="flex justify-center gap-0.5">';
-        for (let i = 0; i < 5; i++) {
-            html += `<span class="w-1.5 h-3 ${i < filled ? 'bg-primary' : 'bg-slate-700'} rounded-full"></span>`;
+        function gradeFromScore(g) {
+            if (g >= 9.0) return { letter: 'A', cls: 'text-emerald-400' };
+            if (g >= 8.0) return { letter: 'A-', cls: 'text-emerald-400' };
+            if (g >= 7.0) return { letter: 'B+', cls: 'text-slate-300' };
+            if (g >= 6.0) return { letter: 'B', cls: 'text-slate-400' };
+            if (g >= 5.0) return { letter: 'C+', cls: 'text-amber-400' };
+            return { letter: 'C', cls: 'text-red-400' };
         }
-        return html + '</div>';
-    }
 
-    function buildProfilePayload() {
-        return {
-            name: `${localStorage.getItem('studentFirstName') || 'Alex'} ${localStorage.getItem('studentLastName') || 'Chen'}`,
-            cgpa: parseFloat(localStorage.getItem('studentCgpa') || '7.5'),
-            hardworking_level: parseInt(localStorage.getItem('studentHardworking') || '7'),
-            cs_proficiency: parseFloat(localStorage.getItem('studentCsProf') || '7.0'),
-            math_proficiency: parseFloat(localStorage.getItem('studentMathProf') || '6.0'),
-            stat_proficiency: parseFloat(localStorage.getItem('studentStatProf') || '6.5'),
-            is_proficiency: parseFloat(localStorage.getItem('studentIsProf') || '6.0'),
-            se_proficiency: parseFloat(localStorage.getItem('studentSeProf') || '6.5'),
-            credits_completed: parseInt(localStorage.getItem('studentCredits') || '60'),
-            year: parseInt(localStorage.getItem('studentYear') || '2'),
-            top_n: 10
-        };
-    }
+        function difficultyBars(level) {
+            const filled = Math.round(level / 2);
+            let html = '<div class="flex justify-center gap-0.5">';
+            for (let i = 0; i < 5; i++) {
+                html += `<span class="w-1.5 h-3 ${i < filled ? 'bg-primary' : 'bg-slate-700'} rounded-full"></span>`;
+            }
+            return html + '</div>';
+        }
 
-    async function fetchRecommendations() {
-        const tbody = document.getElementById('rec-table-body');
-        tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-12 text-center text-slate-500 font-mono">
+        function buildProfilePayload() {
+            return {
+                name: `${localStorage.getItem('studentFirstName') || 'Alex'} ${localStorage.getItem('studentLastName') || 'Chen'}`,
+                cgpa: parseFloat(localStorage.getItem('studentCgpa') || '7.5'),
+                hardworking_level: parseInt(localStorage.getItem('studentHardworking') || '7'),
+                cs_proficiency: parseFloat(localStorage.getItem('studentCsProf') || '7.0'),
+                math_proficiency: parseFloat(localStorage.getItem('studentMathProf') || '6.0'),
+                stat_proficiency: parseFloat(localStorage.getItem('studentStatProf') || '6.5'),
+                is_proficiency: parseFloat(localStorage.getItem('studentIsProf') || '6.0'),
+                se_proficiency: parseFloat(localStorage.getItem('studentSeProf') || '6.5'),
+                credits_completed: parseInt(localStorage.getItem('studentCredits') || '60'),
+                year: parseInt(localStorage.getItem('studentYear') || '2'),
+                top_n: 10
+            };
+        }
+
+        async function fetchRecommendations() {
+            const tbody = document.getElementById('rec-table-body');
+            tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-12 text-center text-slate-500 font-mono">
             <span class="material-symbols-outlined text-primary animate-spin mr-2">progress_activity</span>
             Running ensemble inference…</td></tr>`;
 
-        try {
-            const payload = buildProfilePayload();
-            const resp = await fetch(`${API_BASE}/api/recommend`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (!resp.ok) throw new Error(`API returned ${resp.status}`);
-            const data = await resp.json();
-            renderRecommendations(data.recommendations);
-        } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-12 text-center text-red-400 font-mono">
+            try {
+                const payload = buildProfilePayload();
+                const resp = await fetch(`${API_BASE}/api/recommend`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!resp.ok) throw new Error(`API returned ${resp.status}`);
+                const data = await resp.json();
+                renderRecommendations(data.recommendations);
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-12 text-center text-red-400 font-mono">
                 <span class="material-symbols-outlined mr-2">error</span>
                 API connection failed. Start the server with: <code class="bg-slate-800 px-2 py-1 rounded">uvicorn api:app --reload</code>
             </td></tr>`;
-            console.error('CourseIQ API Error:', err);
-        }
-    }
-
-    function renderRecommendations(recs) {
-        const tbody = document.getElementById('rec-table-body');
-        let rows = '';
-        let totalSuccess = 0, totalGrade = 0, prereqWarnings = 0;
-        const prereqAlerts = [];
-        const insights = [];
-
-        recs.forEach((r, i) => {
-            const g = gradeFromScore(r.expected_grade);
-            const successPct = (r.success_probability * 100).toFixed(0);
-            const confPct = (r.confidence_score * 100).toFixed(0);
-            const confCls = r.confidence_score >= 0.8 ? 'text-emerald-400' : (r.confidence_score >= 0.6 ? 'text-slate-300' : 'text-red-400');
-            const accent = DEPT_ACCENT[r.department] || 'accent-cs';
-            const statusIcon = r.prerequisite_met
-                ? '<span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>'
-                : '<span class="material-symbols-outlined text-amber-500 text-sm">warning</span>';
-
-            totalSuccess += r.success_probability;
-            totalGrade += r.expected_grade;
-            if (!r.prerequisite_met) {
-                prereqWarnings++;
-                prereqAlerts.push(r);
+                console.error('CourseIQ API Error:', err);
             }
+        }
 
-            rows += `
+        function renderRecommendations(recs) {
+            const tbody = document.getElementById('rec-table-body');
+            let rows = '';
+            let totalSuccess = 0, totalGrade = 0, prereqWarnings = 0;
+            const prereqAlerts = [];
+            const insights = [];
+
+            recs.forEach((r, i) => {
+                const g = gradeFromScore(r.expected_grade);
+                const successPct = (r.success_probability * 100).toFixed(0);
+                const confPct = (r.confidence_score * 100).toFixed(0);
+                const confCls = r.confidence_score >= 0.8 ? 'text-emerald-400' : (r.confidence_score >= 0.6 ? 'text-slate-300' : 'text-red-400');
+                const accent = DEPT_ACCENT[r.department] || 'accent-cs';
+                const statusIcon = r.prerequisite_met
+                    ? '<span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>'
+                    : '<span class="material-symbols-outlined text-amber-500 text-sm">warning</span>';
+
+                totalSuccess += r.success_probability;
+                totalGrade += r.expected_grade;
+                if (!r.prerequisite_met) {
+                    prereqWarnings++;
+                    prereqAlerts.push(r);
+                }
+
+                rows += `
             <tr class="border-b border-primary/5 hover:bg-primary/5 transition-colors group cursor-pointer border-l-4 border-l-${accent}">
                 <td class="px-4 py-4 text-slate-500 font-mono">${String(i + 1).padStart(2, '0')}</td>
                 <td class="px-4 py-4 font-bold text-primary">${r.course_code}</td>
@@ -332,70 +349,71 @@
                 <td class="px-4 py-4 text-right font-mono ${confCls}">${confPct}%</td>
                 <td class="px-4 py-4 text-center">${statusIcon}</td>
             </tr>`;
-        });
+            });
 
-        tbody.innerHTML = rows;
+            tbody.innerHTML = rows;
 
-        // Update stat cards
-        const avgSuccess = (totalSuccess / recs.length * 100).toFixed(1);
-        const avgGrade = (totalGrade / recs.length);
-        const avgGradeObj = gradeFromScore(avgGrade);
-        document.getElementById('stat-success').innerHTML = `${avgSuccess}<span class="text-primary text-xl">%</span>`;
-        document.getElementById('stat-success-label').innerText = avgSuccess >= 80 ? 'Strong overall performance' : 'Room for improvement';
-        document.getElementById('stat-grade').innerHTML = `${avgGradeObj.letter}`;
-        document.getElementById('stat-grade-label').innerText = avgGrade >= 8 ? 'On track for Honors' : `Avg ${avgGrade.toFixed(1)}/10`;
-        document.getElementById('stat-prereq').innerHTML = `${String(prereqWarnings).padStart(2, '0')}<span class="text-amber-500 text-xl">!</span>`;
-        document.getElementById('stat-prereq-label').innerText = prereqWarnings > 0 ? `${prereqWarnings} action(s) required` : 'All prerequisites met ✓';
+            // Update stat cards
+            const avgSuccess = (totalSuccess / recs.length * 100).toFixed(1);
+            const avgGrade = (totalGrade / recs.length);
+            const avgGradeObj = gradeFromScore(avgGrade);
+            document.getElementById('stat-success').innerHTML = `${avgSuccess}<span class="text-primary text-xl">%</span>`;
+            document.getElementById('stat-success-label').innerText = avgSuccess >= 80 ? 'Strong overall performance' : 'Room for improvement';
+            document.getElementById('stat-grade').innerHTML = `${avgGradeObj.letter}`;
+            document.getElementById('stat-grade-label').innerText = avgGrade >= 8 ? 'On track for Honors' : `Avg ${avgGrade.toFixed(1)}/10`;
+            document.getElementById('stat-prereq').innerHTML = `${String(prereqWarnings).padStart(2, '0')}<span class="text-amber-500 text-xl">!</span>`;
+            document.getElementById('stat-prereq-label').innerText = prereqWarnings > 0 ? `${prereqWarnings} action(s) required` : 'All prerequisites met ✓';
 
-        // Update prereq alerts panel
-        const alertsList = document.getElementById('prereq-alerts-list');
-        if (prereqAlerts.length === 0) {
-            alertsList.innerHTML = `<p class="text-sm text-emerald-400 font-mono">✓ All prerequisites satisfied</p>`;
-        } else {
-            alertsList.innerHTML = prereqAlerts.map(r => `
+            // Update prereq alerts panel
+            const alertsList = document.getElementById('prereq-alerts-list');
+            if (prereqAlerts.length === 0) {
+                alertsList.innerHTML = `<p class="text-sm text-emerald-400 font-mono">✓ All prerequisites satisfied</p>`;
+            } else {
+                alertsList.innerHTML = prereqAlerts.map(r => `
                 <div class="border-l-2 border-amber-500/50 pl-3">
                     <p class="text-sm font-bold text-slate-100">${r.course_code} — ${r.prerequisite_warning || 'Missing prerequisite'}</p>
                     <p class="text-xs text-slate-400 mt-1">Prerequisite: ${r.prerequisite_name || r.prerequisite_code || 'Unknown'}</p>
                 </div>
             `).join('');
-        }
+            }
 
-        // Update AI Insights
-        const top3 = recs.slice(0, 3);
-        const insightsList = document.getElementById('ai-insights-list');
-        insightsList.innerHTML = top3.map(r => {
-            const confPct = (r.confidence_score * 100).toFixed(0);
-            return `<div class="p-3 bg-primary/5 rounded-lg border border-primary/10">
+            // Update AI Insights
+            const top3 = recs.slice(0, 3);
+            const insightsList = document.getElementById('ai-insights-list');
+            insightsList.innerHTML = top3.map(r => {
+                const confPct = (r.confidence_score * 100).toFixed(0);
+                return `<div class="p-3 bg-primary/5 rounded-lg border border-primary/10">
                 <p class="text-xs text-slate-300">"The <span class="text-primary font-bold">${r.department} Ensemble</span> (GB + RF) predicts <span class="text-emerald-400 font-bold">${(r.success_probability * 100).toFixed(0)}%</span> success in ${r.course_name} with <span class="font-bold">${confPct}%</span> voting consensus."</p>
             </div>`;
-        }).join('');
-    }
-
-    // ── Name & profile sync (existing) ──
-    document.addEventListener('DOMContentLoaded', () => {
-        const storedFirst = localStorage.getItem('studentFirstName');
-        const storedLast = localStorage.getItem('studentLastName');
-        if (storedFirst && storedLast) {
-            const fullName = `${storedFirst} ${storedLast}`;
-            const nameDisplay = document.getElementById('profile-name-display');
-            if (nameDisplay) nameDisplay.innerText = fullName;
-            const avatars = document.querySelectorAll('img[alt="User Avatar"], img[alt="Profile"]');
-            avatars.forEach(img => {
-                const url = new URL(img.src);
-                url.searchParams.set('name', fullName);
-                img.src = url.toString();
-            });
-        }
-        const storedYear = localStorage.getItem('studentYear');
-        if (storedYear) {
-            const yearLabels = { '1': 'Freshman', '2': 'Sophomore', '3': 'Junior', '4': 'Senior' };
-            const standingDisplay = document.getElementById('academic-standing-display');
-            if (standingDisplay) standingDisplay.innerText = `Computer Science ${yearLabels[storedYear] || 'Student'}`;
+            }).join('');
         }
 
-        // Auto-fetch recommendations on page load
-        fetchRecommendations();
-    });
-</script>
+        // ── Name & profile sync (existing) ──
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedFirst = localStorage.getItem('studentFirstName');
+            const storedLast = localStorage.getItem('studentLastName');
+            if (storedFirst && storedLast) {
+                const fullName = `${storedFirst} ${storedLast}`;
+                const nameDisplay = document.getElementById('profile-name-display');
+                if (nameDisplay) nameDisplay.innerText = fullName;
+                const avatars = document.querySelectorAll('img[alt="User Avatar"], img[alt="Profile"]');
+                avatars.forEach(img => {
+                    const url = new URL(img.src);
+                    url.searchParams.set('name', fullName);
+                    img.src = url.toString();
+                });
+            }
+            const storedYear = localStorage.getItem('studentYear');
+            if (storedYear) {
+                const yearLabels = { '1': 'Freshman', '2': 'Sophomore', '3': 'Junior', '4': 'Senior' };
+                const standingDisplay = document.getElementById('academic-standing-display');
+                if (standingDisplay) standingDisplay.innerText = `Computer Science ${yearLabels[storedYear] || 'Student'}`;
+            }
+
+            // Auto-fetch recommendations on page load
+            fetchRecommendations();
+        });
+    </script>
 </body>
+
 </html>

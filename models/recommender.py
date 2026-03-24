@@ -184,7 +184,7 @@ class CourseRecommender:
             Must contain: name, cgpa, hardworking_level,
             cs_proficiency, math_proficiency, stat_proficiency,
             is_proficiency, se_proficiency.
-            Optional: credits_completed, year.
+            Optional: credits_completed, year, overridden_prereqs (list of course codes).
         top_n : int
             Number of recommendations to return.
 
@@ -199,6 +199,14 @@ class CourseRecommender:
         student_profile.setdefault("credits_completed", 60)
         student_profile.setdefault("year", 2)
 
+        # Resolve overridden prereq codes → IDs so the checker accepts them
+        overridden_codes = student_profile.get("overridden_prereqs", [])
+        overridden_ids: set[int] = set()
+        for code in overridden_codes:
+            cid = self.checker.get_course_id_by_code(code)
+            if cid is not None:
+                overridden_ids.add(cid)
+
         all_courses = self.checker.get_all_courses()
         results: list[dict] = []
 
@@ -210,8 +218,8 @@ class CourseRecommender:
             prof_key = DEPT_PROFICIENCY_COL[dept]
             dept_proficiency = float(student_profile.get(prof_key, 5.0))
 
-            # Prerequisite check (custom student has no history)
-            prereq_result = self.checker.check(cid)
+            # Prerequisite check – pass overridden IDs as "completed"
+            prereq_result = self.checker.check(cid, completed_course_ids=overridden_ids)
 
             # Predict with ensemble
             preds = self._predict_for_course(student_profile, course, dept)
@@ -256,3 +264,4 @@ class CourseRecommender:
         # Sort: higher score = better recommendation
         results.sort(key=lambda r: r["recommendation_score"], reverse=True)
         return results[:top_n]
+
